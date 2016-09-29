@@ -1,11 +1,24 @@
+
+
+
+
+
+
 ==Wed, sept 28==
 Next meeting: Friday 12pm Union
 BRING IDEAS FOR FRIDAY
 
 Brandon cannot come so send us ideas
 
+	
+Class Task:
+	Game with a story that can be established in 3-5 minutes
+	Arcade style play
+	Built for phone .:.  1334x750
+	
 Prompt:
 	A notebook full on conspiracy theories
+
 
 Ideas so far:
 	-Main Menu: as open book where we choose minigame
