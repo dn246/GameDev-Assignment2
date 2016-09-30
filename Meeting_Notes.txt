@@ -1,7 +1,71 @@
+==Friday, sept 30 ===
+
+Have jobs that can be done by wednesday oct 5
+Let’s have prototype by friday oct 7
+
+Specific Jobs to do by wednesday
+	Diana: 1st drafts for intro scene && 9/11
+	Kara: concept art/pixel art drafts for moon landing; basic assets;
+	Gabe: 9/11
+	Pasha: Moon Landing
+	Brandon:   So Brandon, we are thinking that the minigame the player would not specifically be tied to the conspiracy event, but it would just pop up in the background and happen to oversee. Would you prefer the player to just be random bystanders or the actual main character?  Leaning for going with the 2nd intro so I don't know how you want the story telling would be tied to this. Would be cool if you can make a quick edit ASAP for the story so I can start the intro scene and have some drafts finished in a few days  Also a quick character description of the kid too so we can work with that -Diana
+
+
+
+I like the idea where the minigames are about bystanders doing whatever that “just happen” to have the backgrounds of the conspiracies happening
+
+Minigames:
+9/11: 
+		Game:
+Character can moves horizontally and tries there best to clean seamless
+table until time is up. Random buttons that are hit on the table turns tv on.
+		Assets:
+Art:
+		TV background
+	Looping Table with chairs
+	Garbage knickknacks
+	Cleaning sprite on knees cleaning table <<animating
+	Button animation
+
+	
+Moon Landing: 
+MC is coffee boy that pours coffee for film studio workers (aka is underling)
+Assets
+Art
+Animations
+PC Idle, run cycle [includes slide at beginning of turns], pouring coffee? [if so, must be very short {2-3 frames at most}]
+Employees asking for coffee [speech bubble or is it assumed?]
+Background [in-process film studio, get ideas from mythbuster ep]
+
+Lets just think of one on wednesday
+
+Intro : book illustrations
+-----------------------------------------------------------------------------------------------
+IDEA POOL
+	Flappy bird???
+	Lets not try minesweeper :)))))))
+	Try not to rip off games and think of ouw own
+	Side scroller schmup
+Decide made up story at later point so art can do later
+	Coffee intern
+	Guy balancing the landing pod minigame
+	
+
+Menu
+Art for first two games
+Code for first two games
+Minigame pixel art
+
+Could we make notebook as a laptop? 
+How did this child get that ipad tho 
+Style is like virtual machine inside the phone that has the games (a la pony island)
+I don’t mind doing the normal notebook page flipping thooo -Diana
+	Kid is innocent bystander at all of the conspiracy events
 
 
 
 
+--------------------------------------------------------------------------------------------------
 
 
 ==Wed, sept 28==
@@ -29,3 +93,6 @@ Art Style:
 	???????????
 
 
+==NEXT WEEK STUFF==
+Third minigame
+All the associated stuff that goes along with it
