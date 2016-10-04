@@ -28,9 +28,10 @@ var timer;
 var fading = false;
 var score = 0;
 var time_left = 30;
+var seamless_total = 1;
 
 function create() {
-    game.world.setBounds(0, 0, 1334*3, 750);
+    game.world.setBounds(0, 0, 1334*(seamless_total+1), 750);
 
     // Add the group of trash bits to the game
 	trash = game.add.group();
@@ -40,17 +41,11 @@ function create() {
     backgrounds = game.add.group();
     backgrounds.create(0,0,'9_11_background');
     backgrounds.create(1334,0,'9_11_background');
-    backgrounds.create(1334*2,0,'9_11_background');
-    backgrounds.create(1334*3,0,'9_11_background');
-    backgrounds.create(1334*4,0,'9_11_background');
 
     // Add the group of tables to the game
     tables = game.add.group();
     tables.create(0,200,'9_11_table');
     tables.create(1334,200,'9_11_table');
-    tables.create(1334*2,200,'9_11_table');
-    tables.create(1334*3,200,'9_11_table');
-    tables.create(1334*4,200,'9_11_table');
 
     // Set up player sprite and animation
     player = game.add.sprite (PLAYER_START_X,PLAYER_START_Y,'player_crawling');
@@ -77,13 +72,18 @@ function update() {
     game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.05, 0.05);
     // Add collision to trash objects so they can be picked up
     game.physics.arcade.overlap(player, trash, collectTrash, null, this);
-    // Update the text position as the camera moves
-    timeText.x = game.camera.x+25
-    timeText.y = game.camera.y+25
-    scoreText.x = game.camera.x+game.camera.width-140
-    scoreText.y = game.camera.y+25
 
-    /* -------------------------START OF PLAYER MOVEMENT------------------------- */
+    updateUI();
+    playerMovement();
+    checkEndlessGeneration();
+}
+
+function render() {
+    game.debug.text( seamless_total.toString(), 100, 380 );
+}
+
+function playerMovement() {
+    // Check input for arrow keys to move player with animation
     player.body.velocity.x = 0;
     player.body.velocity.y = 0;
 
@@ -106,19 +106,23 @@ function update() {
             player.animations.play('player_crawling');
         }
     }
-    /* --------------------------END OF PLAYER MOVEMENT--------------------------- */
-    /////////////////////////////////////////////////////////////////////////////////
-    /* -----------------------START OF ENDLESS RUNNER CODE------------------------ */
-
-    /* ------------------------END OF ENDLESS RUNNER CODE------------------------- */
-    /////////////////////////////////////////////////////////////////////////////////
-    /* --------------------------START OF TIMER CODE------------------------------ */
-    
-    /* ----------------------------END OF TIMER CODE------------------------------ */
 }
 
-function render() {
+function checkEndlessGeneration() {
+    if (player.body.x > seamless_total * 1334) {
+        seamless_total++;
+        backgrounds.create(1334*seamless_total,0,'9_11_background');
+        tables.create(1334*seamless_total,200,'9_11_table');
+        game.world.setBounds(0, 0, 1334*(seamless_total+1), 750);
+    }
+}
 
+function updateUI() {
+    // Update the text position as the camera moves
+    timeText.x = game.camera.x+25;
+    timeText.y = game.camera.y+25;
+    scoreText.x = game.camera.x+game.camera.width-140;
+    scoreText.y = game.camera.y+25;
 }
 
 function collectTrash(player, trash) {
@@ -140,7 +144,7 @@ function secondTick() {
 }
 
 function GameOver() {
-
+    // TODO: show highscore table and enter highscore
 }
 
 function resetLevel() {
