@@ -4,14 +4,17 @@ var game = new Phaser.Game(1334, 750, Phaser.AUTO, '',
 var PLAYER_SPEED = 300;
 var PLAYER_START_X = 100;
 var PLAYER_START_Y = 410;
+var TRASH_X_MIN = 300;
+var TRASH_X_RANGE = 1000;
+var TRASH_Y_MIN = 320;
+var TRASH_Y_RANGE = 200;
 
 function preload() {
     game.load.image('9_11_background', 'assets/images/9_11_background_seamless.png');
     game.load.image('9_11_table', 'assets/images/9_11_table_seamless.png');
+    game.load.image('trash', 'assets/images/9_11_trash.png');
     game.load.spritesheet('player_crawling', 'assets/images/9_11_crawling_anim.png', 167,
         114);
-    game.load.spritesheet('trash', 'assets/images/9_11_trash_spritesheet.png', 17,
-        15);
 }
 
 // Object declarations
@@ -33,10 +36,6 @@ var seamless_total = 1;
 function create() {
     game.world.setBounds(0, 0, 1334*(seamless_total+1), 750);
 
-    // Add the group of trash bits to the game
-	trash = game.add.group();
-	trash.create(0,0,'trash');
-
     // Add the group of backgrounds to the game
     backgrounds = game.add.group();
     backgrounds.create(0,0,'9_11_background');
@@ -51,6 +50,10 @@ function create() {
     player = game.add.sprite (PLAYER_START_X,PLAYER_START_Y,'player_crawling');
     player.animations.add('player_crawling', [0], 6, true);
     player.anchor.setTo(0.5, 0.5);
+
+    // Add the group of trash bits to the game
+    trash = game.add.group();
+    generateTrash();
 
     // Set up text box for timer and score variable in UI
     var timeStyle = { font: "24px Arial", fill: "#000000", align: "left"};
@@ -71,6 +74,7 @@ function update() {
     // Set the interpolating camera to follow the player
     game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.05, 0.05);
     // Add collision to trash objects so they can be picked up
+    game.physics.arcade.enable(trash);
     game.physics.arcade.overlap(player, trash, collectTrash, null, this);
 
     updateUI();
@@ -79,7 +83,7 @@ function update() {
 }
 
 function render() {
-    game.debug.text( seamless_total.toString(), 100, 380 );
+    //game.debug.text( seamless_total.toString(), 100, 380 );
 }
 
 function playerMovement() {
@@ -114,6 +118,13 @@ function checkEndlessGeneration() {
         backgrounds.create(1334*seamless_total,0,'9_11_background');
         tables.create(1334*seamless_total,200,'9_11_table');
         game.world.setBounds(0, 0, 1334*(seamless_total+1), 750);
+        generateTrash();
+    }
+}
+
+function generateTrash() {
+    for (i = 0; i < Math.floor((Math.random() * 5) + 5); i++) {
+        trash.create((seamless_total-1)*1334+Math.floor((Math.random() * TRASH_X_RANGE) + TRASH_X_MIN), Math.floor((Math.random() * TRASH_Y_RANGE) + TRASH_Y_MIN),'trash');
     }
 }
 
@@ -125,9 +136,9 @@ function updateUI() {
     scoreText.y = game.camera.y+25;
 }
 
-function collectTrash(player, trash) {
+function collectTrash(player, t) {
     // Remove the trash from the screen
-    trash.kill();
+    t.kill();
     // Update score and scoreText
     score += 10;
     scoreText.text = 'Score: ' + score;
@@ -161,4 +172,10 @@ function resetFade() {
     player.body.x = PLAYER_START_X - 83.5;
     player.body.y = PLAYER_START_Y - 57;
     fading = false;
+}
+
+function checkOverlap(spriteA, spriteB) {
+    var boundsA = spriteA.getBounds();
+    var boundsB = spriteB.getBounds();
+    return Phaser.Rectangle.intersects(boundsA, boundsB);
 }
