@@ -20,16 +20,23 @@ var tables;
 var player;
 var trash;
 var cursors;
+var scoreText;
+var timeText;
+var timer;
 
 // Variable declarations
 var fading = false;
+var score = 0;
+var time_left = 30;
 
 function create() {
     game.world.setBounds(0, 0, 1334*3, 750);
 
+    // Add the group of trash bits to the game
 	trash = game.add.group();
 	trash.create(0,0,'trash');
 
+    // Add the group of backgrounds to the game
     backgrounds = game.add.group();
     backgrounds.create(0,0,'9_11_background');
     backgrounds.create(1334,0,'9_11_background');
@@ -37,6 +44,7 @@ function create() {
     backgrounds.create(1334*3,0,'9_11_background');
     backgrounds.create(1334*4,0,'9_11_background');
 
+    // Add the group of tables to the game
     tables = game.add.group();
     tables.create(0,200,'9_11_table');
     tables.create(1334,200,'9_11_table');
@@ -44,22 +52,38 @@ function create() {
     tables.create(1334*3,200,'9_11_table');
     tables.create(1334*4,200,'9_11_table');
 
+    // Set up player sprite and animation
     player = game.add.sprite (PLAYER_START_X,PLAYER_START_Y,'player_crawling');
     player.animations.add('player_crawling', [0], 6, true);
     player.anchor.setTo(0.5, 0.5);
 
+    // Set up text box for timer and score variable in UI
+    var timeStyle = { font: "24px Arial", fill: "#000000", align: "left"};
+    timeText = game.add.text(game.camera.x+25, game.camera.y+25, 'Time Rem: 30', timeStyle);
+    var scoreStyle = { font: "24px Arial", fill: "#000000", align: "right"};
+    scoreText = game.add.text(game.camera.x+game.camera.width-140, game.camera.y+25, 'Score: 0', scoreStyle);
+
+    // Set up game physics, keyboard input, camera fade listener
     game.physics.arcade.enable(player);
-
     cursors = game.input.keyboard.createCursorKeys();
-
     game.camera.onFadeComplete.add(resetFade, this);
+
+    // Start the timer for the level
+    game.time.events.add(Phaser.Timer.SECOND, secondTick, this);
 }
 
 function update() {
     // Set the interpolating camera to follow the player
     game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.05, 0.05);
+    // Add collision to trash objects so they can be picked up
+    game.physics.arcade.overlap(player, trash, collectTrash, null, this);
+    // Update the text position as the camera moves
+    timeText.x = game.camera.x+25
+    timeText.y = game.camera.y+25
+    scoreText.x = game.camera.x+game.camera.width-140
+    scoreText.y = game.camera.y+25
 
-    /* START OF PLAYER MOVEMENT */
+    /* -------------------------START OF PLAYER MOVEMENT------------------------- */
     player.body.velocity.x = 0;
     player.body.velocity.y = 0;
 
@@ -82,16 +106,41 @@ function update() {
             player.animations.play('player_crawling');
         }
     }
-    /* END OF PLAYER MOVEMENT */
+    /* --------------------------END OF PLAYER MOVEMENT--------------------------- */
+    /////////////////////////////////////////////////////////////////////////////////
+    /* -----------------------START OF ENDLESS RUNNER CODE------------------------ */
 
-    /* START OF TIMER CODE */
+    /* ------------------------END OF ENDLESS RUNNER CODE------------------------- */
+    /////////////////////////////////////////////////////////////////////////////////
+    /* --------------------------START OF TIMER CODE------------------------------ */
     
-    /* END OF TIMER CODE */
+    /* ----------------------------END OF TIMER CODE------------------------------ */
 }
 
 function render() {
-    game.debug.cameraInfo(game.camera, 32, 32);
-    game.debug.spriteCoords(player, 32, 500);
+
+}
+
+function collectTrash(player, trash) {
+    // Remove the trash from the screen
+    trash.kill();
+    // Update score and scoreText
+    score += 10;
+    scoreText.text = 'Score: ' + score;
+}
+
+function secondTick() {
+    time_left -= 1;
+    timeText.text = 'Time Rem: ' + time_left;
+    if (time_left == 0) {
+        GameOver();
+    } else {
+        game.time.events.add(Phaser.Timer.SECOND, secondTick, this);
+    }
+}
+
+function GameOver() {
+
 }
 
 function resetLevel() {
@@ -102,6 +151,7 @@ function resetLevel() {
 function fade() {
     game.camera.fade(0x000000, 1000);
 }
+
 function resetFade() {
     game.camera.resetFX();
     player.body.x = PLAYER_START_X - 83.5;
