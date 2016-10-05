@@ -10,11 +10,13 @@ var TRASH_Y_MIN = 320;
 var TRASH_Y_RANGE = 200;
 
 function preload() {
-    game.load.image('9_11_background', 'assets/images/9_11_background_seamless.png');
-    game.load.image('9_11_table', 'assets/images/9_11_table_seamless.png');
-    game.load.image('trash', 'assets/images/9_11_trash.png');
-    game.load.spritesheet('player_crawling', 'assets/images/9_11_crawling_anim.png', 167,
-        114);
+    game.load.image('9_11_background', 'assets/images/9_11_background_dark.png');
+    game.load.image('9_11_table', 'assets/images/9_11_seamless_table.png');
+    game.load.image('9_11_foreground', 'assets/images/9_11_seamless_foreground.png');
+    game.load.spritesheet('player_crawling', 'assets/images/9_11_player_sprite.png', 145,
+        105);
+    game.load.spritesheet('trash', 'assets/images/9_11_trash_sprites.png', 92,
+        60);
 }
 
 // Object declarations
@@ -43,17 +45,22 @@ function create() {
 
     // Add the group of tables to the game
     tables = game.add.group();
-    tables.create(0,200,'9_11_table');
-    tables.create(1334,200,'9_11_table');
+    tables.create(0,0,'9_11_table');
+    tables.create(1334,0,'9_11_table');
 
     // Set up player sprite and animation
     player = game.add.sprite (PLAYER_START_X,PLAYER_START_Y,'player_crawling');
-    player.animations.add('player_crawling', [0], 6, true);
+    player.animations.add('player_crawling', [0,1,2,3,4,5], 6, true);
     player.anchor.setTo(0.5, 0.5);
 
     // Add the group of trash bits to the game
     trash = game.add.group();
     generateTrash();
+
+    // Add the group of backgrounds to the game
+    backgrounds = game.add.group();
+    backgrounds.create(0,0,'9_11_foreground');
+    backgrounds.create(1334,0,'9_11_foreground');
 
     // Set up text box for timer and score variable in UI
     var timeStyle = { font: "24px Arial", fill: "#000000", align: "left"};
@@ -94,21 +101,25 @@ function playerMovement() {
     if (!fading) {
         if (cursors.left.isDown && player.body.x > 0) {
             player.body.velocity.x = -PLAYER_SPEED;
-            player.animations.play('player_crawling');
-            player.scale.x = -1;
+            player.animations.play('player_crawling', true);
+            player.scale.x = 1;
         } else if (cursors.right.isDown && player.body.x) {
             player.body.velocity.x = PLAYER_SPEED;
-            player.animations.play('player_crawling');
-            player.scale.x = 1;
+            player.animations.play('player_crawling', true);
+            player.scale.x = -1;
         }
 
         if (cursors.up.isDown && player.body.y > 253) {
             player.body.velocity.y = -PLAYER_SPEED;
-            player.animations.play('player_crawling');
+            player.animations.play('player_crawling', true);
         } else if (cursors.down.isDown && player.body.y < 426) {
             player.body.velocity.y = PLAYER_SPEED;
-            player.animations.play('player_crawling');
+            player.animations.play('player_crawling', true);
         }
+    }
+
+    if (cursors.up.isUp && cursors.down.isUp && cursors.left.isUp && cursors.right.isUp) {
+        player.animations.stop('player_crawling');
     }
 }
 
@@ -124,7 +135,8 @@ function checkEndlessGeneration() {
 
 function generateTrash() {
     for (i = 0; i < Math.floor((Math.random() * 5) + 5); i++) {
-        trash.create((seamless_total-1)*1334+Math.floor((Math.random() * TRASH_X_RANGE) + TRASH_X_MIN), Math.floor((Math.random() * TRASH_Y_RANGE) + TRASH_Y_MIN),'trash');
+        var t = trash.create((seamless_total-1)*1334+Math.floor((Math.random() * TRASH_X_RANGE) + TRASH_X_MIN), Math.floor((Math.random() * TRASH_Y_RANGE) + TRASH_Y_MIN),'trash');
+        //t.frame = Math.floor(Math.random() * 8));
     }
 }
 
