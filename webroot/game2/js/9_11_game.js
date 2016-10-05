@@ -1,5 +1,5 @@
 var game = new Phaser.Game(1334, 750, Phaser.AUTO, '',
-    { preload: preload, create: create, update: update, render: render });
+    { preload: preload, create: create, update: update });
 
 var PLAYER_SPEED = 300;
 var PLAYER_START_X = 100;
@@ -8,16 +8,15 @@ var TRASH_X_MIN = 100;
 var TRASH_X_RANGE = 1200;
 var TRASH_Y_MIN = 410;
 var TRASH_Y_RANGE = 200;
-var CLEAN_TIME = 800;
+var CLEAN_TIME = 400;
 
 function preload() {
     game.load.image('9_11_background', 'assets/images/9_11_background_dark.png');
     game.load.image('9_11_table', 'assets/images/9_11_seamless_table.png');
     game.load.image('9_11_foreground', 'assets/images/9_11_seamless_foreground.png');
-    game.load.spritesheet('player_crawling', 'assets/images/9_11_player_sprite_2.png', 145,
-        106);
-    game.load.spritesheet('trash', 'assets/images/9_11_trash_sprites.png', 92,
-        60);
+    game.load.spritesheet('player_crawling', 'assets/images/9_11_player_sprite_2.png', 145, 106);
+    game.load.spritesheet('trash', 'assets/images/9_11_trash_sprites.png', 92, 60);
+    game.load.spritesheet('bubbles', 'assets/images/9_11_bubbles_small.png', 43, 30);
 }
 
 // Object declarations
@@ -73,9 +72,9 @@ function create() {
 
     // Set up text box for timer and score variable in UI
     var timeStyle = { font: "24px Arial", fill: "#ffffff", align: "left"};
-    timeText = game.add.text(game.camera.x+25, game.camera.y+25, 'Time Rem: 30', timeStyle);
+    timeText = game.add.text(game.camera.x+25, game.camera.y+25, 'Time Left Until Exposure: 30', timeStyle);
     var scoreStyle = { font: "24px Arial", fill: "#ffffff", align: "right"};
-    scoreText = game.add.text(game.camera.x+game.camera.width-140, game.camera.y+25, 'Score: 0', scoreStyle);
+    scoreText = game.add.text(game.camera.x+game.camera.width-300, game.camera.y+25, 'Government filth cleaned up: 0', scoreStyle);
 
     // Set up game physics, keyboard input, camera fade listener
     game.physics.arcade.enable(player);
@@ -92,6 +91,8 @@ function create() {
     allGroup.add(player);
     allGroup.add(trash);
     allGroup.add(foregrounds);
+    allGroup.add(timeText);
+    allGroup.add(scoreText);
 }
 
 function update() {
@@ -104,18 +105,15 @@ function update() {
     checkEndlessGeneration();
 
     trash.forEach(function(t) {
-            if (t.scale.x <= 0.125) {
+            if (t.scale.x <= 0) {
                 score += 1;
-                scoreText.text = 'Score: ' + score;
+                scoreText.text = 'Government filth cleaned up: ' + score;
+                trash.remove(t);
                 t.kill();
             }
         });
 
     allGroup.sort('y', Phaser.Group.SORT_ASCENDING);
-}
-
-function render() {
-    //game.debug.text( seamless_total.toString(), 100, 380 );
 }
 
 function movePlayer (pointer) {
@@ -139,7 +137,7 @@ function movePlayer (pointer) {
         // Determine the time it will take to get to the pointer
         duration = (game.physics.arcade.distanceToPointer(player, pointer) / PLAYER_SPEED) * 1000;
         // Start tween movement towars pointer
-        tween = game.add.tween(player).to({ x: moveX, y: game.input.worldY - 50}, duration, Phaser.Easing.Linear.None, true);
+        tween = game.add.tween(player).to({ x: moveX, y: game.input.worldY - 50}, duration, "Sine.easeInOut", true);
 
         // Set timers to start/stop the cleaning animation once at trash location
         if (clean_click) {
@@ -161,7 +159,16 @@ function movePlayer (pointer) {
 }
 
 function tapTrash(t) {
-    game.add.tween(t.scale).to({ x: t.scale.x*0.5, y: t.scale.y*0.5}, 150, "Sine.easeInOut", true, duration+CLEAN_TIME);
+    if (!cleaning) {
+        var i = 0;
+        while (i < 3) {
+            createBubbles(t.body.x+20+i*25,t.body.y+15+(Math.random()*25-12));
+            i++;
+        }
+
+        // Shrink the piece of trash
+        game.add.tween(t.scale).to({ x: 0, y: 0}, CLEAN_TIME, "Sine.easeInOut", true, duration);
+    }
 }
 
 function checkEndlessGeneration() {
@@ -178,6 +185,21 @@ function checkEndlessGeneration() {
         allGroup.add(trash);
         allGroup.add(foregrounds);
     }
+}
+
+function createBubbles(x, y) {
+    // Create bubbles particle effect
+    var bubbles;
+    game.time.events.add(duration, function() {
+            bubbles = game.add.sprite(x, y,'bubbles');
+            bubbles.animations.add('bubbles', [0,1], 5, true);
+            bubbles.anchor.setTo(0.5, 0.5);
+            // Tween the bubbles scale and alpha
+            game.add.tween(bubbles.scale).to({ x: 1.5, y: 1.5}, CLEAN_TIME, "Sine.easeInOut", true);
+            game.add.tween(bubbles).to({ alpha : 0 }, CLEAN_TIME, "Sine.easeInOut", true);
+            // Set a timer to destroy the bubbles after they dissapear
+            game.time.events.add(duration+CLEAN_TIME, function() {bubbles.kill}, this);
+        }, this);
 }
 
 function generateTrash() {
@@ -200,13 +222,13 @@ function updateUI() {
     // Update the text position as the camera moves
     timeText.x = game.camera.x+25;
     timeText.y = game.camera.y+25;
-    scoreText.x = game.camera.x+game.camera.width-140;
+    scoreText.x = game.camera.x+game.camera.width-365;
     scoreText.y = game.camera.y+25;
 }
 
 function secondTick() {
     time_left -= 1;
-    timeText.text = 'Time Rem: ' + time_left;
+    timeText.text = 'Time Left Until Exposure: ' + time_left;
     if (time_left == 0) {
         GameOver();
     } else {
