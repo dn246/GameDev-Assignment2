@@ -8,13 +8,14 @@ var TRASH_X_MIN = 100;
 var TRASH_X_RANGE = 1200;
 var TRASH_Y_MIN = 410;
 var TRASH_Y_RANGE = 200;
+var CLEAN_TIME = 800;
 
 function preload() {
     game.load.image('9_11_background', 'assets/images/9_11_background_dark.png');
     game.load.image('9_11_table', 'assets/images/9_11_seamless_table.png');
     game.load.image('9_11_foreground', 'assets/images/9_11_seamless_foreground.png');
     game.load.spritesheet('player_crawling', 'assets/images/9_11_player_sprite_2.png', 145,
-        105);
+        106);
     game.load.spritesheet('trash', 'assets/images/9_11_trash_sprites.png', 92,
         60);
 }
@@ -29,6 +30,7 @@ var cursors;
 var scoreText;
 var timeText;
 var timer;
+var allGroup;
 
 // Variable declarations
 var fading = false;
@@ -36,8 +38,9 @@ var score = 0;
 var time_left = 30;
 var seamless_total = 1;
 var tween;
-var move_x = -1;
-var move_y = -1;
+var duration = 0;
+var cleaning = false;
+var clean_click = false;
 
 function create() {
     game.world.setBounds(0, 0, 1334*(seamless_total+1), 750);
@@ -55,6 +58,7 @@ function create() {
     // Set up player sprite and animation
     player = game.add.sprite (PLAYER_START_X,PLAYER_START_Y,'player_crawling');
     player.animations.add('player_crawling', [0,1,2], 5, true);
+    player.animations.add('player_cleaning', [3,4,5], 10, true);
     player.anchor.setTo(0.5, 0.5);
     game.input.onDown.add(movePlayer, this);
 
@@ -80,6 +84,14 @@ function create() {
 
     // Start the timer for the level
     game.time.events.add(Phaser.Timer.SECOND, secondTick, this);
+
+    // Add all objects to the allGroup
+    allGroup = game.add.group();
+    allGroup.add(backgrounds);
+    allGroup.add(tables);
+    allGroup.add(player);
+    allGroup.add(trash);
+    allGroup.add(foregrounds);
 }
 
 function update() {
@@ -87,10 +99,19 @@ function update() {
     game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.05, 0.05);
     // Add collision to trash objects so they can be picked up
     game.physics.arcade.enable(trash);
-    game.physics.arcade.overlap(player, trash, collectTrash, null, this);
 
     updateUI();
     checkEndlessGeneration();
+
+    trash.forEach(function(t) {
+            if (t.scale.x <= 0.125) {
+                score += 1;
+                scoreText.text = 'Score: ' + score;
+                t.kill();
+            }
+        });
+
+    allGroup.sort('y', Phaser.Group.SORT_ASCENDING);
 }
 
 function render() {
@@ -98,26 +119,49 @@ function render() {
 }
 
 function movePlayer (pointer) {
-    // Cancel any movement that is currently happening
-    if (tween && tween.isRunning) {
-        tween.stop();
+    if (!cleaning && game.input.worldY > TRASH_Y_MIN && game.input.worldY < TRASH_Y_MIN+TRASH_Y_RANGE) {
+        // Cancel any movement that is currently happening
+        if (tween && tween.isRunning) {
+            tween.stop();
+        }
+
+        var moveX;
+        // Flip the sprite and start the walking animation
+        if (game.input.worldX < player.body.x) {
+            player.scale.x = 1;
+            moveX = game.input.worldX + 72;
+        } else {
+            player.scale.x = -1;
+            moveX = game.input.worldX - 72;
+        }
+        player.animations.play('player_crawling', true);
+
+        // Determine the time it will take to get to the pointer
+        duration = (game.physics.arcade.distanceToPointer(player, pointer) / PLAYER_SPEED) * 1000;
+        // Start tween movement towars pointer
+        tween = game.add.tween(player).to({ x: moveX, y: game.input.worldY - 50}, duration, Phaser.Easing.Linear.None, true);
+
+        // Set timers to start/stop the cleaning animation once at trash location
+        if (clean_click) {
+            game.time.events.add(duration, function() {
+                    player.animations.play('player_cleaning', false);
+                    cleaning = true;
+                }, this);
+            game.time.events.add(duration+CLEAN_TIME, function() {
+                    player.animations.stop('player_cleaning');
+                    cleaning = false;
+                }, this);
+        } else {
+            game.time.events.add(duration, function() {
+                    player.animations.stop('player_crawling');
+                    cleaning = false;
+                }, this);
+        }
     }
+}
 
-    // Flip the sprite and start the walking animation
-    if (game.input.worldX < player.body.x) {
-        player.scale.x = 1;
-    } else {
-        player.scale.x = -1;
-    }
-    player.animations.play('player_crawling', true);
-
-    // Determine the time it will take to get to the pointer
-    var duration = (game.physics.arcade.distanceToPointer(player, pointer) / PLAYER_SPEED) * 1000;
-    // Start tween movement towars pointer
-    tween = game.add.tween(player).to({ x: game.input.worldX, y: game.input.worldY }, duration, Phaser.Easing.Linear.None, true);
-
-    // Set a timer to stop the anmation
-    game.time.events.add(duration, function() {player.animations.stop('player_crawling');}, this);
+function tapTrash(t) {
+    game.add.tween(t.scale).to({ x: t.scale.x*0.5, y: t.scale.y*0.5}, 150, "Sine.easeInOut", true, duration+CLEAN_TIME);
 }
 
 function checkEndlessGeneration() {
@@ -128,6 +172,11 @@ function checkEndlessGeneration() {
         foregrounds.create(1334*seamless_total,0,'9_11_foreground');
         game.world.setBounds(0, 0, 1334*(seamless_total+1), 750);
         generateTrash();
+
+        allGroup.add(backgrounds);
+        allGroup.add(tables);
+        allGroup.add(trash);
+        allGroup.add(foregrounds);
     }
 }
 
@@ -137,6 +186,14 @@ function generateTrash() {
         sub = Math.floor(Math.random() * 8);
         var t = trash.create((seamless_total-1)*1334+Math.floor((Math.random() * TRASH_X_RANGE) + TRASH_X_MIN), Math.floor((Math.random() * TRASH_Y_RANGE) + TRASH_Y_MIN),'trash',sub);
     }
+    trash.setAll('inputEnabled', true);
+    trash.setAll('input.useHandCursor', true);
+    trash.forEach(function(t) {
+            t.events.onInputDown.add(tapTrash,this); 
+            t.anchor.setTo(0.5, 0.5);
+            t.events.onInputOver.add(function() {clean_click = true;}, this);
+            t.events.onInputOut.add(function() {clean_click = false;}, this);
+        });
 }
 
 function updateUI() {
@@ -145,14 +202,6 @@ function updateUI() {
     timeText.y = game.camera.y+25;
     scoreText.x = game.camera.x+game.camera.width-140;
     scoreText.y = game.camera.y+25;
-}
-
-function collectTrash(player, t) {
-    // Remove the trash from the screen
-    t.kill();
-    // Update score and scoreText
-    score += 10;
-    scoreText.text = 'Score: ' + score;
 }
 
 function secondTick() {
