@@ -35,6 +35,9 @@ var fading = false;
 var score = 0;
 var time_left = 30;
 var seamless_total = 1;
+var tween;
+var move_x = -1;
+var move_y = -1;
 
 function create() {
     game.world.setBounds(0, 0, 1334*(seamless_total+1), 750);
@@ -51,8 +54,9 @@ function create() {
 
     // Set up player sprite and animation
     player = game.add.sprite (PLAYER_START_X,PLAYER_START_Y,'player_crawling');
-    player.animations.add('player_crawling', [0,1,2,3,4,5], 6, true);
+    player.animations.add('player_crawling', [0,1,2], 5, true);
     player.anchor.setTo(0.5, 0.5);
+    game.input.onDown.add(movePlayer, this);
 
     // Add the group of trash bits to the game
     trash = game.add.group();
@@ -64,9 +68,9 @@ function create() {
     foregrounds.create(1334,0,'9_11_foreground');
 
     // Set up text box for timer and score variable in UI
-    var timeStyle = { font: "24px Arial", fill: "#000000", align: "left"};
+    var timeStyle = { font: "24px Arial", fill: "#ffffff", align: "left"};
     timeText = game.add.text(game.camera.x+25, game.camera.y+25, 'Time Rem: 30', timeStyle);
-    var scoreStyle = { font: "24px Arial", fill: "#000000", align: "right"};
+    var scoreStyle = { font: "24px Arial", fill: "#ffffff", align: "right"};
     scoreText = game.add.text(game.camera.x+game.camera.width-140, game.camera.y+25, 'Score: 0', scoreStyle);
 
     // Set up game physics, keyboard input, camera fade listener
@@ -86,7 +90,6 @@ function update() {
     game.physics.arcade.overlap(player, trash, collectTrash, null, this);
 
     updateUI();
-    playerMovement();
     checkEndlessGeneration();
 }
 
@@ -94,34 +97,27 @@ function render() {
     //game.debug.text( seamless_total.toString(), 100, 380 );
 }
 
-function playerMovement() {
-    // Check input for arrow keys to move player with animation
-    player.body.velocity.x = 0;
-    player.body.velocity.y = 0;
-
-    if (!fading) {
-        if (cursors.left.isDown && player.body.x > 0) {
-            player.body.velocity.x = -PLAYER_SPEED;
-            player.animations.play('player_crawling', true);
-            player.scale.x = 1;
-        } else if (cursors.right.isDown && player.body.x) {
-            player.body.velocity.x = PLAYER_SPEED;
-            player.animations.play('player_crawling', true);
-            player.scale.x = -1;
-        }
-
-        if (cursors.up.isDown && player.body.y > 320) {
-            player.body.velocity.y = -PLAYER_SPEED;
-            player.animations.play('player_crawling', true);
-        } else if (cursors.down.isDown && player.body.y < 575) {
-            player.body.velocity.y = PLAYER_SPEED;
-            player.animations.play('player_crawling', true);
-        }
+function movePlayer (pointer) {
+    // Cancel any movement that is currently happening
+    if (tween && tween.isRunning) {
+        tween.stop();
     }
 
-    if (cursors.up.isUp && cursors.down.isUp && cursors.left.isUp && cursors.right.isUp) {
-        player.animations.stop('player_crawling');
+    // Flip the sprite and start the walking animation
+    if (game.input.worldX < player.body.x) {
+        player.scale.x = 1;
+    } else {
+        player.scale.x = -1;
     }
+    player.animations.play('player_crawling', true);
+
+    // Determine the time it will take to get to the pointer
+    var duration = (game.physics.arcade.distanceToPointer(player, pointer) / PLAYER_SPEED) * 1000;
+    // Start tween movement towars pointer
+    tween = game.add.tween(player).to({ x: game.input.worldX, y: game.input.worldY }, duration, Phaser.Easing.Linear.None, true);
+
+    // Set a timer to stop the anmation
+    game.time.events.add(duration, function() {player.animations.stop('player_crawling');}, this);
 }
 
 function checkEndlessGeneration() {
@@ -136,8 +132,8 @@ function checkEndlessGeneration() {
 }
 
 function generateTrash() {
-    var sub = 0;
-    for (i = 0; i < Math.floor((Math.random() * 5) + 5); i++) {
+    var sub = 0, num = Math.floor(Math.random() * 5 + 5);
+    for (i = 0; i < num; i++) {
         sub = Math.floor(Math.random() * 8);
         var t = trash.create((seamless_total-1)*1334+Math.floor((Math.random() * TRASH_X_RANGE) + TRASH_X_MIN), Math.floor((Math.random() * TRASH_Y_RANGE) + TRASH_Y_MIN),'trash',sub);
     }
