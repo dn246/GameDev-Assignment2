@@ -24,6 +24,7 @@ var backgrounds;
 var tables;
 var player;
 var trash;
+var foregrounds;
 var cursors;
 var scoreText;
 var timeText;
@@ -58,9 +59,9 @@ function create() {
     generateTrash();
 
     // Add the group of backgrounds to the game
-    backgrounds = game.add.group();
-    backgrounds.create(0,0,'9_11_foreground');
-    backgrounds.create(1334,0,'9_11_foreground');
+    foregrounds = game.add.group();
+    foregrounds.create(0,0,'9_11_foreground');
+    foregrounds.create(1334,0,'9_11_foreground');
 
     // Set up text box for timer and score variable in UI
     var timeStyle = { font: "24px Arial", fill: "#000000", align: "left"};
@@ -109,10 +110,10 @@ function playerMovement() {
             player.scale.x = -1;
         }
 
-        if (cursors.up.isDown && player.body.y > 253) {
+        if (cursors.up.isDown && player.body.y > 320) {
             player.body.velocity.y = -PLAYER_SPEED;
             player.animations.play('player_crawling', true);
-        } else if (cursors.down.isDown && player.body.y < 426) {
+        } else if (cursors.down.isDown && player.body.y < 575) {
             player.body.velocity.y = PLAYER_SPEED;
             player.animations.play('player_crawling', true);
         }
@@ -127,7 +128,8 @@ function checkEndlessGeneration() {
     if (player.body.x > seamless_total * 1334) {
         seamless_total++;
         backgrounds.create(1334*seamless_total,0,'9_11_background');
-        tables.create(1334*seamless_total,200,'9_11_table');
+        tables.create(1334*seamless_total,0,'9_11_table');
+        foregrounds.create(1334*seamless_total,0,'9_11_foreground');
         game.world.setBounds(0, 0, 1334*(seamless_total+1), 750);
         generateTrash();
     }
