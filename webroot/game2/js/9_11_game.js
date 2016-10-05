@@ -4,16 +4,16 @@ var game = new Phaser.Game(1334, 750, Phaser.AUTO, '',
 var PLAYER_SPEED = 300;
 var PLAYER_START_X = 100;
 var PLAYER_START_Y = 410;
-var TRASH_X_MIN = 300;
-var TRASH_X_RANGE = 1000;
-var TRASH_Y_MIN = 320;
+var TRASH_X_MIN = 100;
+var TRASH_X_RANGE = 1200;
+var TRASH_Y_MIN = 410;
 var TRASH_Y_RANGE = 200;
 
 function preload() {
     game.load.image('9_11_background', 'assets/images/9_11_background_dark.png');
     game.load.image('9_11_table', 'assets/images/9_11_seamless_table.png');
     game.load.image('9_11_foreground', 'assets/images/9_11_seamless_foreground.png');
-    game.load.spritesheet('player_crawling', 'assets/images/9_11_player_sprite.png', 145,
+    game.load.spritesheet('player_crawling', 'assets/images/9_11_player_sprite_2.png', 145,
         105);
     game.load.spritesheet('trash', 'assets/images/9_11_trash_sprites.png', 92,
         60);
@@ -136,9 +136,10 @@ function checkEndlessGeneration() {
 }
 
 function generateTrash() {
+    var sub = 0;
     for (i = 0; i < Math.floor((Math.random() * 5) + 5); i++) {
-        var t = trash.create((seamless_total-1)*1334+Math.floor((Math.random() * TRASH_X_RANGE) + TRASH_X_MIN), Math.floor((Math.random() * TRASH_Y_RANGE) + TRASH_Y_MIN),'trash');
-        //t.frame = Math.floor(Math.random() * 8));
+        sub = Math.floor(Math.random() * 8);
+        var t = trash.create((seamless_total-1)*1334+Math.floor((Math.random() * TRASH_X_RANGE) + TRASH_X_MIN), Math.floor((Math.random() * TRASH_Y_RANGE) + TRASH_Y_MIN),'trash',sub);
     }
 }
 
