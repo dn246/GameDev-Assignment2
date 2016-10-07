@@ -1,240 +1,236 @@
 var game = new Phaser.Game(1334, 750, Phaser.AUTO, '',
     { preload: preload, create: create, update: update });
 
-var PLAYER_SPEED = 300;
-var PLAYER_START_X = 100;
-var PLAYER_START_Y = 410;
-var TRASH_X_MIN = 100;
-var TRASH_X_RANGE = 1200;
-var TRASH_Y_MIN = 410;
-var TRASH_Y_RANGE = 200;
-var CLEAN_TIME = 400;
+var MOVE_DURATION = 1000;
+var LEFT_ANIM = 0;
+var DOWN_ANIM = 1;
+var RIGHT_ANIM = 2;
+var UP_ANIM = 3;
 
 function preload() {
     game.load.image('rpi_background', 'assets/images/9_11_background.png');
     game.load.spritesheet('player_dancing', 'assets/images/rain_dance_player_sprite.png', 120, 160);
     game.load.spritesheet('shirley_dancing', 'assets/images/rain_dance_the_honorable_sprite.png', 156, 204);
+    game.load.spritesheet('rain', 'assets/images/snowflakes.png', 17, 17);
 }
 
 // Object declarations
 var background;
 var player;
+var shirley;
 var cursors;
 var scoreText;
+var timeText;
+var emitter;
 
 // Variable declarations
-var score = 0;
+var score = 50;
+var can_swipe = true;
 var tween;
 var duration = 0;
+var level = -1;
+var index = 0;
+var time_left = 10;
+var player_turn = false;
+var dance_moves = [[0],[0,1],[0,1,2]];
+var your_moves = [];
+var game_over = false;
+/*
+dance_moves = ...
+             index = 0    index = 1    index = 2
+          +--------------------------------------+
+level = 0 |danceMove(n)|            |            |
+level = 1 |danceMove(n)|danceMove(n)|            |
+level = 2 |danceMove(n)|danceMove(n)|danceMove(n)|
+          +--------------------------------------+
+*/
 
 function create() {
     // Add the group of backgrounds to the game
     background = game.add.sprite(0,0,'rpi_background');
 
     // Set up player sprite and animation
-    player = game.add.sprite (PLAYER_START_X,PLAYER_START_Y,'player_crawling');
-    player.animations.add('player_crawling', [0,1,2], 5, true);
-    player.animations.add('player_cleaning', [3,4,5], 10, true);
+    player = game.add.sprite (445,375,'player_dancing');
+    player.animations.add('dancing_left',  [0], 1, true);
+    player.animations.add('dancing_down',  [1], 1, true);
+    player.animations.add('dancing_right', [2], 1, true);
+    player.animations.add('dancing_up',    [2], 1, true);
     player.anchor.setTo(0.5, 0.5);
-    game.input.onDown.add(movePlayer, this);
 
-    // Add the group of trash bits to the game
-    trash = game.add.group();
-    generateTrash();
+    // Set up shirley's sprite and animation
+    shirley = game.add.sprite (890,375,'shirley_dancing');
+    shirley.animations.add('dancing_left',  [6], 1, true);
+    shirley.animations.add('dancing_down',  [3], 1, true);
+    shirley.animations.add('dancing_right', [5], 1, true);
+    shirley.animations.add('dancing_up',    [4], 1, true);
+    shirley.anchor.setTo(0.5, 0.5);
 
-    // Add the group of backgrounds to the game
-    foregrounds = game.add.group();
-    foregrounds.create(0,0,'9_11_foreground');
-    foregrounds.create(1334,0,'9_11_foreground');
+    emitter = game.add.emitter(game.world.centerX, -200, 400);
+    emitter.width = game.world.width;
+    //emitter.angle = 30; // uncomment to set an angle for the rain.
 
-    // Set up text box for timer and score variable in UI
+    emitter.makeParticles('rain');
+
+    emitter.minParticleScale = 0.25;
+    emitter.maxParticleScale = 1;
+
+    emitter.setYSpeed(300, 500);
+    emitter.setXSpeed(-5, 5);
+
+    emitter.start(false, 1600, 5, 0);
+    emitter.frequency = 500;
+
+    // Set up text box for the score variable in UI
+    var scoreStyle = { font: "24px Arial", fill: "#ffffff", align: "left"};
+    scoreText = game.add.text(25, 25, 'Precipitation: 50%', scoreStyle);
     var timeStyle = { font: "24px Arial", fill: "#ffffff", align: "left"};
-    timeText = game.add.text(game.camera.x+25, game.camera.y+25, 'Time Left Until Exposure: 30', timeStyle);
-    var scoreStyle = { font: "24px Arial", fill: "#ffffff", align: "right"};
-    scoreText = game.add.text(game.camera.x+game.camera.width-300, game.camera.y+25, 'Government filth cleaned up: 0', scoreStyle);
+    timeText = game.add.text(1170, 25, 'Time Left: 10', timeStyle);
+    timeText.visible = false;
 
-    // Set up game physics, keyboard input, camera fade listener
-    game.physics.arcade.enable(player);
+    // Set up touch input
     cursors = game.input.pointer1;
-    game.camera.onFadeComplete.add(resetFade, this);
 
-    // Start the timer for the level
-    game.time.events.add(Phaser.Timer.SECOND, secondTick, this);
-
-    // Add all objects to the allGroup
-    allGroup = game.add.group();
-    allGroup.add(backgrounds);
-    allGroup.add(tables);
-    allGroup.add(player);
-    allGroup.add(trash);
-    allGroup.add(foregrounds);
-    allGroup.add(timeText);
-    allGroup.add(scoreText);
+    // Start Shirley's first turn
+    shirleysTurn();
 }
 
 function update() {
-    // Set the interpolating camera to follow the player
-    game.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.05, 0.05);
-    // Add collision to trash objects so they can be picked up
-    game.physics.arcade.enable(trash);
-
-    updateUI();
-    checkEndlessGeneration();
-
-    trash.forEach(function(t) {
-            if (t.scale.x <= 0) {
-                score += 1;
-                scoreText.text = 'Government filth cleaned up: ' + score;
-                trash.remove(t);
-                t.kill();
-            }
-        });
-
-    allGroup.sort('y', Phaser.Group.SORT_ASCENDING);
+    checkSwipes();
 }
 
-function movePlayer (pointer) {
-    if (!cleaning && game.input.worldY > TRASH_Y_MIN && game.input.worldY < TRASH_Y_MIN+TRASH_Y_RANGE) {
-        // Cancel any movement that is currently happening
-        if (tween && tween.isRunning) {
-            tween.stop();
-        }
+function playersTurn() {
+    console.log("PLAYERS TURN");
+    player_turn = true;
+    timeText.visible = true;
 
-        var moveX;
-        // Flip the sprite and start the walking animation
-        if (game.input.worldX < player.body.x) {
-            player.scale.x = 1;
-            moveX = game.input.worldX + 72;
-        } else {
-            player.scale.x = -1;
-            moveX = game.input.worldX - 72;
-        }
-        player.animations.play('player_crawling', true);
+    // Start the timer for the player
+    game.time.events.add(1000, secondTick, this);
+}
 
-        // Determine the time it will take to get to the pointer
-        duration = (game.physics.arcade.distanceToPointer(player, pointer) / PLAYER_SPEED) * 1000;
-        // Start tween movement towars pointer
-        tween = game.add.tween(player).to({ x: moveX, y: game.input.worldY - 50}, duration, "Sine.easeInOut", true);
-
-        // Set timers to start/stop the cleaning animation once at trash location
-        if (clean_click) {
-            game.time.events.add(duration, function() {
-                    player.animations.play('player_cleaning', false);
-                    cleaning = true;
-                }, this);
-            game.time.events.add(duration+CLEAN_TIME, function() {
-                    player.animations.stop('player_cleaning');
-                    cleaning = false;
-                }, this);
-        } else {
-            game.time.events.add(duration, function() {
-                    player.animations.stop('player_crawling');
-                    cleaning = false;
-                }, this);
-        }
+function shirleysTurn() {
+    if (level + 1 == dance_moves.length) {
+        GameOver();
     }
-}
 
-function tapTrash(t) {
-    if (!cleaning) {
+    if (!game_over) {
+        player_turn = false;
+        your_moves = [];
+        time_left = 10;
+        timeText.visible = false;
+        level++;
+
+        console.log("SHIRLEYS TURN [" + your_moves + "] != [" + dance_moves[level] + "]");
+
         var i = 0;
-        while (i < 3) {
-            createBubbles(t.body.x+20+i*25,t.body.y+15+(Math.random()*25-12));
-            i++;
+        // for each dance move in this level, start a timer to play the dance animation
+        dance_moves[level].forEach(function() {
+            game.time.events.add(MOVE_DURATION * i, function() {
+                danceMove(shirley, dance_moves[level][i]);
+                console.log("SHIRLEY DANCE ANIM START " + dance_moves[level][i]);
+                i++;
+            }, this);
+        });
+
+        // set a timer for the total duration of all the dance moves together to change turns
+        game.time.events.add(MOVE_DURATION * (dance_moves[level].length), function() {
+            playersTurn();
+        }, this);
+    }
+}
+
+function checkSwipes() {
+    if (player_turn && !game_over) {
+        if (can_swipe) {
+            var swipeCoordX,
+                swipeCoordY,
+                swipeCoordX2,
+                swipeCoordY2,
+                swipeMinDistance = 100;
+            game.input.onDown.add(function(pointer) {
+                swipeCoordX = pointer.clientX;
+                swipeCoordY = pointer.clientY;
+                }, this);
+            game.input.onUp.add(function(pointer) {
+                if (can_swipe) {
+                    swipeCoordX2 = pointer.clientX;
+                    swipeCoordY2 = pointer.clientY;
+                    console.log("P1(" + swipeCoordX + "," + swipeCoordY + ")");
+                    console.log("P2(" + swipeCoordX2 + "," + swipeCoordY2 + ")");
+                    if(swipeCoordX2 < swipeCoordX - swipeMinDistance){
+                        your_moves.push(LEFT_ANIM);
+                        danceMove(player, LEFT_ANIM);
+                        console.log("left pushed " + LEFT_ANIM);
+                    } else if(swipeCoordX2 > swipeCoordX + swipeMinDistance) {
+                        your_moves.push(RIGHT_ANIM);
+                        danceMove(player, RIGHT_ANIM);
+                        console.log("right pushed " + RIGHT_ANIM);
+                    } else if(swipeCoordY2 < swipeCoordY - swipeMinDistance) {
+                        your_moves.push(UP_ANIM);
+                        danceMove(player, UP_ANIM);
+                        console.log("up pushed " + UP_ANIM);
+                    } else if(swipeCoordY2 > swipeCoordY + swipeMinDistance) {
+                        your_moves.push(DOWN_ANIM);
+                        danceMove(player, DOWN_ANIM);
+                        console.log("right pushed " + DOWN_ANIM);
+                    }
+                }
+                can_swipe = false;
+                game.time.events.add(MOVE_DURATION, function() {can_swipe = true;}, this);
+            }, this);
         }
 
-        // Shrink the piece of trash
-        game.add.tween(t.scale).to({ x: 0, y: 0}, CLEAN_TIME, "Sine.easeInOut", true, duration);
-    }
-}
-
-function checkEndlessGeneration() {
-    if (player.body.x > seamless_total * 1334) {
-        seamless_total++;
-        backgrounds.create(1334*seamless_total,0,'9_11_background');
-        tables.create(1334*seamless_total,0,'9_11_table');
-        foregrounds.create(1334*seamless_total,0,'9_11_foreground');
-        game.world.setBounds(0, 0, 1334*(seamless_total+1), 750);
-        generateTrash();
-
-        allGroup.add(backgrounds);
-        allGroup.add(tables);
-        allGroup.add(trash);
-        allGroup.add(foregrounds);
-    }
-}
-
-function createBubbles(x, y) {
-    // Create bubbles particle effect
-    var bubbles;
-    game.time.events.add(duration, function() {
-            bubbles = game.add.sprite(x, y,'bubbles');
-            bubbles.animations.add('bubbles', [0,1], 5, true);
-            bubbles.anchor.setTo(0.5, 0.5);
-            // Tween the bubbles scale and alpha
-            game.add.tween(bubbles.scale).to({ x: 1.5, y: 1.5}, CLEAN_TIME, "Sine.easeInOut", true);
-            game.add.tween(bubbles).to({ alpha : 0 }, CLEAN_TIME, "Sine.easeInOut", true);
-            // Set a timer to destroy the bubbles after they dissapear
-            game.time.events.add(duration+CLEAN_TIME, function() {bubbles.kill}, this);
-        }, this);
-}
-
-function generateTrash() {
-    var sub = 0, num = Math.floor(Math.random() * 5 + 5);
-    for (i = 0; i < num; i++) {
-        sub = Math.floor(Math.random() * 8);
-        var t = trash.create((seamless_total-1)*1334+Math.floor((Math.random() * TRASH_X_RANGE) + TRASH_X_MIN), Math.floor((Math.random() * TRASH_Y_RANGE) + TRASH_Y_MIN),'trash',sub);
-    }
-    trash.setAll('inputEnabled', true);
-    trash.setAll('input.useHandCursor', true);
-    trash.forEach(function(t) {
-            t.events.onInputDown.add(tapTrash,this); 
-            t.anchor.setTo(0.5, 0.5);
-            t.events.onInputOver.add(function() {clean_click = true;}, this);
-            t.events.onInputOut.add(function() {clean_click = false;}, this);
+        // Check the list of moves so far you've done this turn against shirley's moves
+        var same_elements = your_moves.every(function(element, index) {
+            return element === dance_moves[level][index];
         });
-}
 
-function updateUI() {
-    // Update the text position as the camera moves
-    timeText.x = game.camera.x+25;
-    timeText.y = game.camera.y+25;
-    scoreText.x = game.camera.x+game.camera.width-365;
-    scoreText.y = game.camera.y+25;
+        if (same_elements) {
+            //console.log("your_moves.length = " + your_moves.length);
+            //console.log("dance_moves[level].length = " + dance_moves[level].length);
+            if (your_moves.length > 0 && your_moves.length == dance_moves[level].length) {
+                game.time.events.add(MOVE_DURATION, function() {
+                    updateScore(-10);
+                    console.log("PLAYER SUCCESS [" + your_moves + "] == [" + dance_moves[level] + "]");
+                    shirleysTurn();
+                }, this);
+            }
+        } else {
+            updateScore(10);
+            console.log("PLAYER FAIL");
+            shirleysTurn();
+        }
+    }
 }
 
 function secondTick() {
     time_left -= 1;
-    timeText.text = 'Time Left Until Exposure: ' + time_left;
+    timeText.text = 'Time Left: ' + time_left;
     if (time_left == 0) {
-        GameOver();
+        shirleysTurn();
     } else {
-        game.time.events.add(Phaser.Timer.SECOND, secondTick, this);
+        game.time.events.add(1000, secondTick, this);
+    }
+}
+
+function danceMove(character, i) {
+    if (i == 0) {
+        character.animations.play('dancing_left');
+    } else if (i == 1) {
+        character.animations.play('dancing_down');
+    } else if (i == 2) {
+        character.animations.play('dancing_right');
+    } else if (i == 3) {
+        character.animations.play('dancing_up');
     }
 }
 
 function GameOver() {
-    // TODO: show highscore table and enter highscore
+    console.log('GameOver');
+    game_over = true;
 }
 
-function resetLevel() {
-    fade();
-    fading = true;
-}
-
-function fade() {
-    game.camera.fade(0x000000, 1000);
-}
-
-function resetFade() {
-    game.camera.resetFX();
-    player.body.x = PLAYER_START_X - 83.5;
-    player.body.y = PLAYER_START_Y - 57;
-    fading = false;
-}
-
-function checkOverlap(spriteA, spriteB) {
-    var boundsA = spriteA.getBounds();
-    var boundsB = spriteB.getBounds();
-    return Phaser.Rectangle.intersects(boundsA, boundsB);
+function updateScore(s) {
+    score += s;
+    emitter.frequency = (101 - score) * 10;
+    scoreText.text = 'Precipitation: ' + score + '%';
 }

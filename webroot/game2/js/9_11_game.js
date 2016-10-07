@@ -17,6 +17,7 @@ function preload() {
     game.load.spritesheet('player_crawling', 'assets/images/9_11_player_sprite_2.png', 145, 106);
     game.load.spritesheet('trash', 'assets/images/9_11_trash_sprites.png', 92, 60);
     game.load.spritesheet('bubbles', 'assets/images/9_11_bubbles_small.png', 43, 30);
+    game.load.spritesheet('tv', 'assets/images/9_11_tv.png', 508, 273);
 }
 
 // Object declarations
@@ -29,6 +30,8 @@ var cursors;
 var scoreText;
 var timeText;
 var timer;
+var tv;
+var remote;
 var allGroup;
 
 // Variable declarations
@@ -70,11 +73,14 @@ function create() {
     foregrounds.create(0,0,'9_11_foreground');
     foregrounds.create(1334,0,'9_11_foreground');
 
+    tv = game.add.sprite(430,-273,'tv');
+    tv.animations.add('video', [0,1,2], 10, true);
+
     // Set up text box for timer and score variable in UI
-    var timeStyle = { font: "24px Arial", fill: "#ffffff", align: "left"};
+    var timeStyle = { font: "24px Lucida Console", fill: "#ffffff", align: "left"};
     timeText = game.add.text(game.camera.x+25, game.camera.y+25, 'Time Left Until Exposure: 30', timeStyle);
-    var scoreStyle = { font: "24px Arial", fill: "#ffffff", align: "right"};
-    scoreText = game.add.text(game.camera.x+game.camera.width-300, game.camera.y+25, 'Government filth cleaned up: 0', scoreStyle);
+    var scoreStyle = { font: "24px Lucida Console", fill: "#ffffff", align: "right"};
+    scoreText = game.add.text(game.camera.x+game.camera.width-400, game.camera.y+25, 'Government filth cleaned up: 0', scoreStyle);
 
     // Set up game physics, keyboard input, camera fade listener
     game.physics.arcade.enable(player);
@@ -113,7 +119,9 @@ function update() {
             }
         });
 
-    allGroup.sort('y', Phaser.Group.SORT_ASCENDING);
+    if (time_left > 0) {
+        allGroup.sort('y', Phaser.Group.SORT_ASCENDING);
+    }
 }
 
 function movePlayer (pointer) {
@@ -205,7 +213,7 @@ function createBubbles(x, y) {
 function generateTrash() {
     var sub = 0, num = Math.floor(Math.random() * 5 + 5);
     for (i = 0; i < num; i++) {
-        sub = Math.floor(Math.random() * 8);
+        sub = Math.floor(Math.random() * 7 + 1);
         var t = trash.create((seamless_total-1)*1334+Math.floor((Math.random() * TRASH_X_RANGE) + TRASH_X_MIN), Math.floor((Math.random() * TRASH_Y_RANGE) + TRASH_Y_MIN),'trash',sub);
     }
     trash.setAll('inputEnabled', true);
@@ -222,7 +230,7 @@ function updateUI() {
     // Update the text position as the camera moves
     timeText.x = game.camera.x+25;
     timeText.y = game.camera.y+25;
-    scoreText.x = game.camera.x+game.camera.width-365;
+    scoreText.x = game.camera.x+game.camera.width-470;
     scoreText.y = game.camera.y+25;
 }
 
@@ -237,7 +245,32 @@ function secondTick() {
 }
 
 function GameOver() {
-    // TODO: show highscore table and enter highscore
+    trash.forEach(function(t) {
+        t.kill();
+    });
+
+    remote = game.add.sprite(player.body.x+300, 500,'trash',0);
+
+    remote.inputEnabled = true;
+    remote.input.useHandCursor = true;
+    remote.anchor.setTo(0.5, 0.5);
+    remote.events.onInputDown.add(function () {
+            playTv();
+            game.time.events.add(duration, function() {
+                remote.kill();
+            }, this);
+        },this);
+    remote.events.onInputOver.add(function() {clean_click = true;}, this);
+    remote.events.onInputOut.add(function() {clean_click = false;}, this);
+}
+
+function playTv() {
+    tv.x = game.camera.x+430;
+    allGroup.add(tv);
+    game.add.tween(tv).to({ y: 50}, 3000, "Linear", true);
+    game.time.events.add(3000, function() {
+        tv.animations.play('video');
+    }, this);
 }
 
 function resetLevel() {
