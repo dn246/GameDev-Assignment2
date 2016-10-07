@@ -78,7 +78,7 @@ function create() {
 
     // Set up game physics, keyboard input, camera fade listener
     game.physics.arcade.enable(player);
-    cursors = game.input.keyboard.createCursorKeys();
+    cursors = game.input.pointer1;
     game.camera.onFadeComplete.add(resetFade, this);
 
     // Start the timer for the level
