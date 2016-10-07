@@ -14,7 +14,6 @@ function preload() {
     game.load.image('rpi_background', 'assets/images/9_11_background.png');
     game.load.spritesheet('player_dancing', 'assets/images/rain_dance_player_sprite.png', 120, 160);
     game.load.spritesheet('shirley_dancing', 'assets/images/rain_dance_the_honorable_sprite.png', 156, 204);
-    game.load.spritesheet('bubbles', 'assets/images/9_11_bubbles_small.png', 43, 30);
 }
 
 // Object declarations
@@ -30,12 +29,7 @@ var duration = 0;
 
 function create() {
     // Add the group of backgrounds to the game
-    background = game.add.sprite(0,0,'9_11_background');
-
-    // Add the group of tables to the game
-    tables = game.add.group();
-    tables.create(0,0,'9_11_table');
-    tables.create(1334,0,'9_11_table');
+    background = game.add.sprite(0,0,'rpi_background');
 
     // Set up player sprite and animation
     player = game.add.sprite (PLAYER_START_X,PLAYER_START_Y,'player_crawling');
