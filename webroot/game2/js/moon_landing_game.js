@@ -14,17 +14,20 @@ var PLAYER_MIN_Y = 130;
 function preload() {
     game.load.image('moon_background', 'assets/images/moon_landing_background.png');
     game.load.image('moon_set', 'assets/images/moon_landing_set.png');
-    game.load.spritesheet('player_walk', 'assets/images/main_character_walk_cycle.png', 114,
-        204, 4, 0, 235);
-    game.load.spritesheet('cameraMan_walk', 'assets/images/cameraman_walk_cycle.png', 100,
-        100, 4);
-    game.load.spritesheet('director_walk', 'assets/images/director_walk_cycle.png', 114,
-        226, 4, 0, 235);
-    game.load.spritesheet('janitor_walk', 'assets/images/janitor_walk_cycle.png', 100,
-        100, 4);
+    game.load.spritesheet('player_walk', 'assets/images/mcwalkcycle.png', 118,
+        211, 8);
+    game.load.spritesheet('coffeeMug', 'assets/images/coffee_pot_sprite_sheet.png', 42,
+        31, 6);
+    game.load.spritesheet('cameraMan_walk', 'assets/images/cameraman_walk_cycle.png', 302,
+        208, 4);
+    game.load.spritesheet('director_walk', 'assets/images/director_walk_cycle.png', 310,
+        226, 4);
+    game.load.spritesheet('janitor_walk', 'assets/images/janitor_walk_cycle.png', 319,
+        204, 4);
 }
 
 var player;
+var coffeePot;
 var cameraMan;
 var director;
 var janitor;
@@ -49,21 +52,36 @@ function create() {
     moon_set = game.add.group();
     moon_set.create(0,0,'moon_set');
 
+    //player = game.add.group();
     // Set up player sprite and animation
     player = game.add.sprite (PLAYER_START_X,PLAYER_START_Y,'player_walk');
-    player.animations.add('player_walking', [0,1,2,3], 6, true);
+    player.animations.add('player_walking', [0,1,2,3,4,5,6,7], 6, true);
     player.animations.add('player_idle', [0], 6, true);
     player.anchor.setTo(0.5, 0.5);
     game.input.onDown.add(movePlayer, this);
 
+    //a coffee mug stuck on the player
+    coffeePot = game.add.sprite (45,-45,'coffeeMug');
+    coffeePot.animations.add('filling', [5,4,3,2,1,0], 1, false);
+    coffeePot.animations.add('full', [0], 6, true);
+    coffeePot.animations.add('fourCup', [1], 6, true);
+    coffeePot.animations.add('threeCup', [2], 6, true);
+    coffeePot.animations.add('twoCup', [3], 6, true);
+    coffeePot.animations.add('oneCup', [4], 6, true);
+    coffeePot.animations.add('empty', [5], 6, true);
+    player.addChild(coffeePot);
+
+    //cameraman wants coffee...why doesn't he get it himself, he's on break...
     cameraMan = game.add.sprite (PLAYER_START_X+200,PLAYER_START_Y,'cameraMan_walk');
     cameraMan.animations.add('cameraMan_walking', [0,1,2,3], 6, true);
     cameraMan.animations.add('cameraMan_idle', [0], 6, true);
 
+    //director wants coffee, better be quick
     director = game.add.sprite (PLAYER_START_X-200,PLAYER_START_Y,'director_walk');
     director.animations.add('director_walking', [0,1,2,3], 6, true);
     director.animations.add('director_idle', [0], 6, true);
 
+    //janitor wants coffee, cool dude
     janitor = game.add.sprite (PLAYER_START_X,PLAYER_START_Y+200,'janitor_walk');
     janitor.animations.add('janitor_walking', [0,1,2,3], 6, true);
     janitor.animations.add('janitor_idle', [0], 6, true);
@@ -76,7 +94,8 @@ function create() {
 
     // Set up game physics, keyboard input, camera fade listener
     game.physics.arcade.enable(player);
-    cursor = game.input.keyboard.createCursorKeys();
+    //cursor = game.input.mousePointer;
+    cursor = game.input.pointer1;
     game.camera.onFadeComplete.add(resetFade, this);
 
 
@@ -92,7 +111,7 @@ function update() {
 }
 
 function render() {
-    game.debug.pointer(game.input.mousePointer);
+
 }
 
 function movePlayer (pointer) {
@@ -145,7 +164,12 @@ function updateUI() {
 }
 
 function refillPot(){
-
+    if (potCups === 0) {
+        coffeePot.animations.play('filling');
+        potCups = 5;
+    }else {
+        console.log("not at 0 cups fuck off");
+    }
 }
 
 function secondTick() {
@@ -160,13 +184,13 @@ function secondTick() {
 
 function randomEntry() {
     var randomizer = Math.floor(Math.random()*30);
-    if (randomizer == 0){
+    if (randomizer === 0){
         game.debug.text("left janitor");
-    } else if (randomizer == 0){
+    } else if (randomizer === 0){
         game.debug.text("right janitor");
-    } else if (randomizer == 0){
+    } else if (randomizer === 0){
         game.debug.text("left cameraman");
-    } else if (randomizer == 0){
+    } else if (randomizer === 0){
         game.debug.text("right cameraman");
     }
 }
