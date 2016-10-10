@@ -74,7 +74,7 @@ function create() {
     foregrounds.create(1334,0,'9_11_foreground');
 
     tv = game.add.sprite(430,-273,'tv');
-    tv.animations.add('video', [0,1,2], 10, true);
+    tv.animations.add('video', [0,1,2,3,4], 10, true);
 
     // Set up text box for timer and score variable in UI
     var timeStyle = { font: "24px Lucida Console", fill: "#ffffff", align: "left"};
