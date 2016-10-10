@@ -12,18 +12,18 @@ var PLAYER_MIN_X = 65;
 var PLAYER_MIN_Y = 130;
 
 function preload() {
-    game.load.image('moon_background', 'assets/images/moon_landing_background.png');
     game.load.image('moon_set', 'assets/images/moon_landing_set.png');
     game.load.spritesheet('player_walk', 'assets/images/mcwalkcycle.png', 118,
         211, 8);
-    game.load.spritesheet('coffeeMug', 'assets/images/coffee_pot_sprite_sheet.png', 42,
-        31, 6);
-    game.load.spritesheet('cameraMan_walk', 'assets/images/cameraman_walk_cycle.png', 302,
-        208, 4);
-    game.load.spritesheet('director_walk', 'assets/images/director_walk_cycle.png', 310,
-        226, 4);
-    game.load.spritesheet('janitor_walk', 'assets/images/janitor_walk_cycle.png', 319,
-        204, 4);
+    game.load.spritesheet('coffeeMug', 'assets/images/coffee_pot_sprite_sheet.png', 36,
+        31, 6, 0, 8);
+    game.load.spritesheet('cameraMan', 'assets/images/cameraman_walk_cycle.png', 129,
+        208, 4 , 0 , 231);
+    game.load.spritesheet('director', 'assets/images/director_walk_cycle.png', 128,
+        226, 4, 0, 242);
+    game.load.spritesheet('janitor', 'assets/images/janitor_walk_cycle.png', 159,
+        204, 4, 0, 206);
+    game.load.image('pot_refill', 'assets/images/coffee_speech_bubble.png');
 }
 
 var player;
@@ -35,7 +35,6 @@ var moon_set;
 var cursor;
 var scoreText;
 var timeText;
-var timer;
 var tween;
 
 var fading = false;
@@ -52,17 +51,16 @@ function create() {
     moon_set = game.add.group();
     moon_set.create(0,0,'moon_set');
 
-    //player = game.add.group();
     // Set up player sprite and animation
     player = game.add.sprite (PLAYER_START_X,PLAYER_START_Y,'player_walk');
-    player.animations.add('player_walking', [0,1,2,3,4,5,6,7], 6, true);
+    player.animations.add('player_walking', [0,1,2,3,4,5,6,7], 10, true);
     player.animations.add('player_idle', [0], 6, true);
     player.anchor.setTo(0.5, 0.5);
     game.input.onDown.add(movePlayer, this);
 
     //a coffee mug stuck on the player
     coffeePot = game.add.sprite (45,-45,'coffeeMug');
-    coffeePot.animations.add('filling', [5,4,3,2,1,0], 1, false);
+    coffeePot.animations.add('filling', [5,4,3,2,1,0], 2, true);
     coffeePot.animations.add('full', [0], 6, true);
     coffeePot.animations.add('fourCup', [1], 6, true);
     coffeePot.animations.add('threeCup', [2], 6, true);
@@ -72,19 +70,13 @@ function create() {
     player.addChild(coffeePot);
 
     //cameraman wants coffee...why doesn't he get it himself, he's on break...
-    cameraMan = game.add.sprite (PLAYER_START_X+200,PLAYER_START_Y,'cameraMan_walk');
-    cameraMan.animations.add('cameraMan_walking', [0,1,2,3], 6, true);
-    cameraMan.animations.add('cameraMan_idle', [0], 6, true);
+    createCustomer('cameraMan');
 
     //director wants coffee, better be quick
-    director = game.add.sprite (PLAYER_START_X-200,PLAYER_START_Y,'director_walk');
-    director.animations.add('director_walking', [0,1,2,3], 6, true);
-    director.animations.add('director_idle', [0], 6, true);
+    createCustomer('director');
 
     //janitor wants coffee, cool dude
-    janitor = game.add.sprite (PLAYER_START_X,PLAYER_START_Y+200,'janitor_walk');
-    janitor.animations.add('janitor_walking', [0,1,2,3], 6, true);
-    janitor.animations.add('janitor_idle', [0], 6, true);
+    createCustomer('janitor');
 
     // Set up text box for timer and score variable in UI
     var timeStyle = { font: "24px Arial", fill: "#000000", align: "left"};
@@ -104,8 +96,39 @@ function create() {
     game.time.events.add(Phaser.Timer.SECOND, secondTick, this);
 }
 
+function createCustomer(filename){
+    var x = Math.floor(Math.random()*200)+100, t_scale = 1, y = 130, side = -100;
+    if (Math.random() < 0.5){
+        x += 900;
+        side = 1444;
+        t_scale = -1;
+    }
+    y += Math.floor(Math.random()*520);
+    console.log(x);
+
+    var customer = game.add.sprite(side, y, filename);
+    customer.animations.add(filename+'_walking',[0,1,2,3], 6, true);
+    customer.animations.add(filename+'_idle',[1], 6, true);
+    customer.animations.play(filename+'_walking');
+    customer.anchor.setTo(.5,.5);
+
+    //add the bubble demanding coffee and set it up to be a child of the customer
+    var speech_bubble = game.add.sprite(0, -175, "pot_refill");
+    customer.addChild(speech_bubble);
+    customer.scale.x = t_scale;
+
+    var duration = (game.physics.arcade.distanceToXY(customer, x, y) / PLAYER_SPEED) * 1000;
+    game.add.tween(customer).to({ x:x, y:y }, duration, Phaser.Easing.Linear.None, true);
+    game.time.events.add(duration, function() {
+        customer.animations.stop(filename+'_walking');
+        customer.animations.play(filename+'_idle');}, this);
+}
+
 function update() {
 
+    if (player.x > 570 && player.x < 760 && player.y < 220){
+        refillPot();
+    }
 
     updateUI();
 }
@@ -131,8 +154,6 @@ function movePlayer (pointer) {
     // Determine the time it will take to get to the pointer
     var duration = (game.physics.arcade.distanceToPointer(player, pointer) / PLAYER_SPEED) * 1000;
     // Start tween movement towards pointer
-    //570-760x,170-220y is coffee table range
-    //66-1250?,130-650y window size
     var tempX = game.input.worldX;
     var tempY = game.input.worldY;
     if (tempX < PLAYER_MIN_X){
@@ -182,18 +203,6 @@ function secondTick() {
     }
 }
 
-function randomEntry() {
-    var randomizer = Math.floor(Math.random()*30);
-    if (randomizer === 0){
-        game.debug.text("left janitor");
-    } else if (randomizer === 0){
-        game.debug.text("right janitor");
-    } else if (randomizer === 0){
-        game.debug.text("left cameraman");
-    } else if (randomizer === 0){
-        game.debug.text("right cameraman");
-    }
-}
 
 function GameOver() {
     // TODO: show highscore table and enter highscore
