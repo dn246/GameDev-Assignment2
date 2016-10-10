@@ -14,10 +14,10 @@ function preload() {
     game.load.image('9_11_background', 'assets/images/9_11_background_dark.png');
     game.load.image('9_11_table', 'assets/images/9_11_seamless_table.png');
     game.load.image('9_11_foreground', 'assets/images/9_11_seamless_foreground.png');
-    game.load.spritesheet('player_crawling', 'assets/images/9_11_player_sprite_2.png', 145, 106);
+    game.load.spritesheet('player_crawling', 'assets/images/9_11_player_sprite_2.png', 147, 120);
     game.load.spritesheet('trash', 'assets/images/9_11_trash_sprites.png', 92, 60);
     game.load.spritesheet('bubbles', 'assets/images/9_11_bubbles_small.png', 43, 30);
-    game.load.spritesheet('tv', 'assets/images/9_11_tv.png', 508, 273);
+    game.load.spritesheet('tv', 'assets/images/9_11_tv.png', 508, 276);
 }
 
 // Object declarations
