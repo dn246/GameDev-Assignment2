@@ -33,6 +33,11 @@ var duration = 0;
 var cleaning = false;
 var clean_click = false;
 
+// Sound declarations
+var fx_cleaning;
+var fx_clock_buzzer;
+var fx_tv_click;
+
 var nineEleven = {
 
     preload: function() {
@@ -43,6 +48,10 @@ var nineEleven = {
         game.load.spritesheet('trash', 'assets/images/9_11_trash_sprites.png', 92, 60);
         game.load.spritesheet('bubbles', 'assets/images/9_11_bubbles_small.png', 43, 30);
         game.load.spritesheet('tv', 'assets/images/9_11_tv.png', 508, 276);
+
+        game.load.audio('cleaning', 'assets/sounds/cleaning.wav');
+        game.load.audio('clock_buzzer', 'assets/sounds/clock_buzzer.wav');
+        game.load.audio('tv_click', 'assets/sounds/tv_click.wav');
     },
 
     create: function() {
@@ -90,6 +99,11 @@ var nineEleven = {
 
         // Start the timer for the level
         game.time.events.add(Phaser.Timer.SECOND, secondTick, this);
+
+        // Set up all the game sounds
+        fx_cleaning = game.add.audio('cleaning');
+        fx_clock_buzzer = game.add.audio('clock_buzzer');
+        fx_tv_click = game.add.audio('tv_click');
 
         // Add all objects to the allGroup
         allGroup = game.add.group();
@@ -175,6 +189,8 @@ var nineEleven = {
                 i++;
             }
 
+            fx_cleaning.play();
+
             // Shrink the piece of trash
             game.add.tween(t.scale).to({ x: 0, y: 0}, CLEAN_TIME, "Sine.easeInOut", true, duration);
         }
@@ -246,6 +262,8 @@ var nineEleven = {
     },
 
     GameOver: function() {
+        fx_clock_buzzer.play();
+
         trash.forEach(function(t) {
             t.kill();
         });
@@ -266,6 +284,7 @@ var nineEleven = {
     },
 
     playTv: function() {
+        fx_tv_click.play();
         tv.x = game.camera.x+430;
         allGroup.add(tv);
         game.add.tween(tv).to({ y: 50}, 3000, "Linear", true);
