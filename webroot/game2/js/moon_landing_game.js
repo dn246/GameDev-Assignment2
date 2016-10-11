@@ -44,6 +44,7 @@ var moonLanding = {
         this.load.image('cup_refill', 'assets/images/coffee_speech_bubble.png');
         this.load.image('happy', 'assets/images/smiley_face_speech_bubble.png');
         this.load.image('sad', 'assets/images/sad_face_speech_bubble.png');
+        game.load.image('return_button', 'assets/images/button_return_notebook.png');
     },
 
     create: function() {
@@ -248,7 +249,15 @@ var moonLanding = {
 
     GameOver: function() {
         // TODO: show highscore table and enter highscore
-        game.state.start('menu');
+        createReturn();
+    },
+
+    createReturn: function() {
+        var return_button = game.add.sprite(1150,600,'return_button');
+        return_button.events.onInputDown.add(function() {
+            game.state.start('menu');
+        },this); 
+        return_button.anchor.setTo(0.5, 0.5);
     },
 
     resetLevel: function() {

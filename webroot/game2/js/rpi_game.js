@@ -37,12 +37,29 @@ var rpi_game = {
               +--------------------------------------+
     */
 
+    // Sound declarations
+    var fx_boo;
+    var fx_cheer;
+    var fx_clock_buzzer;
+    var fx_incorrect;
+    var fx_thunder_storm;
+    var fx_click;
+
     preload: function() {
         game.load.image('rpi_background', 'assets/images/rain_dance_background_01.png');
+        game.load.image('rpi_background_light', 'assets/images/rain_dance_background_02.png');
         game.load.image('swipe_arrow', 'assets/images/rain_dance_arrow_swipe.png');
-        game.load.spritesheet('player_dancing', 'assets/images/rain_dance_player_sprite.png', 120, 156);
+        game.load.image('return_button', 'assets/images/button_return_notebook.png');
+        game.load.image('rain', 'assets/images/rain.png');
+        game.load.spritesheet('player_dancing', 'assets/images/rain_dance_player_sprite.png', 136, 156);
         game.load.spritesheet('shirley_dancing', 'assets/images/rain_dance_the_honorable_sprite.png', 156, 180);
-        game.load.spritesheet('rain', 'assets/images/snowflakes.png', 17, 17);
+
+        game.load.audio('boo', 'assets/sounds/boo.wav');
+        game.load.audio('cheer', 'assets/sounds/cheer.wav');
+        game.load.audio('clock_buzzer', 'assets/sounds/clock_buzzer.wav');
+        game.load.audio('incorrect', 'assets/sounds/incorrect.wav');
+        game.load.audio('thunder_storm', 'assets/sounds/thunder_storm.wav');
+        game.load.audio('click', 'assets/sounds/click.wav');
     }
 
     create: function() {
@@ -90,6 +107,13 @@ var rpi_game = {
         // Set up touch input
         cursors = game.input.pointer1;
 
+        // Load sounds
+        fx_boo = game.add.audio('boo');
+        fx_cheer = game.add.audio('cheer');
+        fx_clock_buzzer = game.add.audio('clock_buzzer');
+        fx_incorrect = game.add.audio('incorrect');
+        fx_thunder_storm = game.add.audio('thunder_storm');
+
         // Start Shirley's first turn
         shirleysTurn();
     },
@@ -111,13 +135,16 @@ var rpi_game = {
 
     secondTick: function() {
         time_left -= 1;
+        fx_click.play();
         if (time_left < 0) {
             time_left = 0;
+            fx_clock_buzzer.play();
         }
         timeText.text = 'Time Left: ' + time_left;
         if (time_left == 0) {
             updateScore(10);
             console.log("PLAYER FAIL");
+            fx_incorrect.play();
             shirleysTurn();
         } else {
             game.time.events.add(1000, secondTick, this);
@@ -130,6 +157,9 @@ var rpi_game = {
                 GameOver();
                 return;
             }
+
+            fx_thunder_storm.play();
+
             player_turn = false;
             timeText.visible = false;
             curr_i = 0;
@@ -160,12 +190,14 @@ var rpi_game = {
                 if (your_moves.length > 0 && your_moves.length == dance_moves[level].length) {
                     game.time.events.add(MOVE_DURATION, function() {
                         updateScore(-10);
+                        fx_cheer.play();
                         console.log("PLAYER SUCCESS [" + your_moves + "] == [" + dance_moves[level] + "]");
                         shirleysTurn();
                     }, this);
                 }
             } else {
                 updateScore(10);
+                fx_incorrect.play();
                 console.log("PLAYER FAIL");
                 shirleysTurn();
             }
@@ -277,6 +309,21 @@ var rpi_game = {
         console.log('GameOver');
         game_over = true;
         player_turn = false;
+        if (score == 0) {
+            fx_cheer.play();
+            background = game.add.sprite(0,0,'rpi_background_light');
+        } else {
+            fx_boo.play();
+        }
+        createReturn();
+    },
+
+    createReturn: function() {
+        var return_button = game.add.sprite(1150,600,'return_button');
+        return_button.events.onInputDown.add(function() {
+            game.state.start('menu');
+        },this); 
+        return_button.anchor.setTo(0.5, 0.5);
     },
 
     updateScore:function(s) {

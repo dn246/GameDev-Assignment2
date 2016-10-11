@@ -33,16 +33,26 @@ var duration = 0;
 var cleaning = false;
 var clean_click = false;
 
+// Sound declarations
+var fx_cleaning;
+var fx_clock_buzzer;
+var fx_tv_click;
+
 var nineEleven = {
 
     preload: function() {
         game.load.image('9_11_background', 'assets/images/9_11_background_dark.png');
         game.load.image('9_11_table', 'assets/images/9_11_seamless_table.png');
         game.load.image('9_11_foreground', 'assets/images/9_11_seamless_foreground.png');
+        game.load.image('return_button', 'assets/images/button_return_notebook.png');
         game.load.spritesheet('player_crawling', 'assets/images/9_11_player_sprite_2.png', 147, 120);
         game.load.spritesheet('trash', 'assets/images/9_11_trash_sprites.png', 92, 60);
         game.load.spritesheet('bubbles', 'assets/images/9_11_bubbles_small.png', 43, 30);
         game.load.spritesheet('tv', 'assets/images/9_11_tv.png', 508, 276);
+
+        game.load.audio('cleaning', 'assets/sounds/cleaning.wav');
+        game.load.audio('clock_buzzer', 'assets/sounds/clock_buzzer.wav');
+        game.load.audio('tv_click', 'assets/sounds/tv_click.wav');
     },
 
     create: function() {
@@ -75,7 +85,7 @@ var nineEleven = {
         foregrounds.create(1334,0,'9_11_foreground');
 
         tv = game.add.sprite(430,-273,'tv');
-        tv.animations.add('video', [0,1,2,3,4], 10, true);
+        tv.animations.add('video', [0,1,2,3,4,5,6,7,8], 5, true);
 
         // Set up text box for timer and score variable in UI
         var timeStyle = { font: "24px Lucida Console", fill: "#ffffff", align: "left"};
@@ -90,6 +100,11 @@ var nineEleven = {
 
         // Start the timer for the level
         game.time.events.add(Phaser.Timer.SECOND, secondTick, this);
+
+        // Set up all the game sounds
+        fx_cleaning = game.add.audio('cleaning');
+        fx_clock_buzzer = game.add.audio('clock_buzzer');
+        fx_tv_click = game.add.audio('tv_click');
 
         // Add all objects to the allGroup
         allGroup = game.add.group();
@@ -175,6 +190,8 @@ var nineEleven = {
                 i++;
             }
 
+            fx_cleaning.play();
+
             // Shrink the piece of trash
             game.add.tween(t.scale).to({ x: 0, y: 0}, CLEAN_TIME, "Sine.easeInOut", true, duration);
         }
@@ -246,6 +263,8 @@ var nineEleven = {
     },
 
     GameOver: function() {
+        fx_clock_buzzer.play();
+
         trash.forEach(function(t) {
             t.kill();
         });
@@ -266,12 +285,22 @@ var nineEleven = {
     },
 
     playTv: function() {
+        fx_tv_click.play();
         tv.x = game.camera.x+430;
         allGroup.add(tv);
         game.add.tween(tv).to({ y: 50}, 3000, "Linear", true);
         game.time.events.add(3000, function() {
             tv.animations.play('video');
+            createReturn();
         }, this);
+    },
+
+    createReturn: function() {
+        var return_button = game.add.sprite(1150,600,'return_button');
+        return_button.events.onInputDown.add(function() {
+            game.state.start('menu');
+        },this); 
+        return_button.anchor.setTo(0.5, 0.5);
     },
 
     resetLevel: function() {
