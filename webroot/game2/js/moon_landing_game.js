@@ -1,17 +1,17 @@
 // MiniGame for moonLanding conspiracy, basically DinerDash...
 
-var player;
+var m_player;
 var coffeePot;
 var cameraMan;
 var director;
 var janitor;
 var moon_set;
 var cursor;
-var scoreText;
-var timeText;
-var tween;
+var m_scoreText;
+var m_timeText;
+var m_tween;
 var customerGroup;
-var allGroup;
+var m_allGroup;
 
 var fading = false;
 
@@ -54,14 +54,14 @@ var moonLanding = {
         moon_set = this.add.group();
         moon_set.create(0,0,'moon_set');
 
-        // Set up player sprite and animation
-        player = this.add.sprite (this.PLAYER_START_X,this.PLAYER_START_Y,'player_walk');
-        player.animations.add('player_walking', [0,1,2,3,4,5,6,7], 60, true);
-        player.animations.add('player_idle', [0], 6, true);
-        player.anchor.setTo(0.5, 0.5);
+        // Set up m_player sprite and animation
+        m_player = this.add.sprite (this.PLAYER_START_X,this.PLAYER_START_Y,'player_walk');
+        m_player.animations.add('player_walking', [0,1,2,3,4,5,6,7], 60, true);
+        m_player.animations.add('player_idle', [0], 6, true);
+        m_player.anchor.setTo(0.5, 0.5);
         this.input.onDown.add(this.movePlayer, this);
 
-        //a coffee mug stuck on the player
+        //a coffee mug stuck on the m_player
         coffeePot = this.add.sprite (45,-45,'coffeeMug');
         coffeePot.animations.add('filling', [5,4,3,2,1,0], 2, true);
         coffeePot.animations.add('5', [0], 6, true);
@@ -70,7 +70,7 @@ var moonLanding = {
         coffeePot.animations.add('2', [3], 6, true);
         coffeePot.animations.add('1', [4], 6, true);
         coffeePot.animations.add('0', [5], 6, true);
-        player.addChild(coffeePot);
+        m_player.addChild(coffeePot);
 
 
         customerGroup = this.add.group();
@@ -85,68 +85,38 @@ var moonLanding = {
 
         // Set up text box for timer and score variable in UI
         var timeStyle = { font: "24px Arial", fill: "#000000", align: "left"};
-        timeText = this.add.text(this.camera.x+25, this.camera.height-50, 'Time Rem: 90', timeStyle);
+        m_timeText = this.add.text(this.camera.x+25, this.camera.height-50, 'Time Rem: 90', timeStyle);
         var scoreStyle = { font: "24px Arial", fill: "#000000", align: "right"};
-        scoreText = this.add.text(this.camera.x+this.camera.width-140, this.camera.height-50, 'Score: 0', scoreStyle);
+        m_scoreText = this.add.text(this.camera.x+this.camera.width-140, this.camera.height-50, 'Score: 0', scoreStyle);
 
         // Set up game physics, keyboard input, camera fade listener
-        game.physics.arcade.enable(player);
+        game.physics.arcade.enable(m_player);
         game.physics.arcade.enable(customerGroup);
         cursor = this.input.pointer1;
         this.camera.onFadeComplete.add(this.resetFade, this);
 
         // Start the timer for the level
-        this.time.events.add(Phaser.Timer.SECOND, this.secondTick, this);
+        this.time.events.add(Phaser.Timer.SECOND, this.secondTick, game);
 
-        // add the elements to the allGroup for depth sorting
-        allGroup = this.add.group();
-        allGroup.add(player);
-        allGroup.add(cameraMan);
-        allGroup.add(director);
-        allGroup.add(janitor);
-    },
-
-    createCustomer: function(filename){
-        var x = Math.floor(Math.random()*200)+100, t_scale = 1, y = 130, side = -100;
-        if (Math.random() < 0.5){
-            x += 900;
-            side = 1444;
-            t_scale = -1;
-        }
-        y += Math.floor(Math.random()*520);
-
-        var customer = this.add.sprite(side, y, filename);
-        customer.animations.add(filename+'_walking',[0,1,2,3], 6, true);
-        customer.animations.add(filename+'_idle',[1], 6, true);
-        customer.animations.play(filename+'_walking');
-        customer.anchor.setTo(.5,.5);
-
-        //add the bubble demanding coffee and set it up to be a child of the customer
-        var speech_bubble = this.add.sprite(0, -175, "cup_refill");
-        customer.addChild(speech_bubble);
-        customer.scale.x = t_scale;
-
-        var duration = (this.physics.arcade.distanceToXY(customer, x, y) / this.PLAYER_SPEED) * 1000;
-        this.add.tween(customer).to({ x:x, y:y }, duration, Phaser.Easing.Linear.None, true);
-        this.time.events.add(duration, function() {
-            customer.animations.stop(filename+'_walking');
-            customer.animations.play(filename+'_idle');}, this);
-
-        game.physics.arcade.enable(customer);
-
-        customerGroup.add(customer);
-        return customer;
+        // add the elements to the m_allGroup for depth sorting
+        m_allGroup = this.add.group();
+        m_allGroup.add(m_player);
+        m_allGroup.add(cameraMan);
+        m_allGroup.add(director);
+        m_allGroup.add(janitor);
+        m_allGroup.add(m_timeText);
+        m_allGroup.add(m_scoreText);
     },
 
     update: function() {
 
-        if (player.x > 570 && player.x < 760 && player.y < 220){
+        if (m_player.x > 570 && m_player.x < 760 && m_player.y < 220){
             this.refillPot();
         }
         customerGroup.forEach(function(customer) {
             console.log(typeof customer);
-            game.physics.arcade.overlap(player, customer, function(){console.log("suck it");},null, this);
-            /*if (this.checkOverlap(player, customer)){
+            game.physics.arcade.overlap(m_player, customer, function(){console.log("suck it");},null, this);
+            /*if (this.checkOverlap(m_player, customer)){
                 this.refillCup(customer);
             }*/
         });
@@ -154,7 +124,51 @@ var moonLanding = {
 
 
         this.updateUI();
-        allGroup.sort('y', Phaser.Group.SORT_ASCENDING);
+        m_allGroup.sort('y', Phaser.Group.SORT_ASCENDING);
+    },
+
+    movePlayer: function(pointer) {
+        if (!this.interacting) {
+            this.interacting = true;
+            // Cancel any movement that is currently happening
+            if (m_tween && m_tween.isRunning) {
+                m_tween.stop();
+            }
+
+            // Flip the sprite and start the walking animation
+            if (this.input.worldX >= m_player.body.x) {
+                m_player.scale.x = 1;
+            } else {
+                m_player.scale.x = -1;
+            }
+            m_player.animations.play('player_walking', true);
+
+            // Determine the time it will take to get to the pointer
+            var duration = (this.physics.arcade.distanceToPointer(m_player, pointer) / this.PLAYER_SPEED) * 1000;
+            // Start m_tween movement towards pointer
+            var tempX = this.input.worldX;
+            var tempY = this.input.worldY;
+            if (tempX < this.PLAYER_MIN_X) {
+                tempX = this.PLAYER_MIN_X;
+            }
+            else if (tempX > this.PLAYER_MAX_X) {
+                tempX = this.PLAYER_MAX_X;
+            }
+            if (tempY < this.PLAYER_MIN_Y) {
+                tempY = this.PLAYER_MIN_Y;
+            }
+            else if (tempY > this.PLAYER_MAX_Y) {
+                tempY = this.PLAYER_MAX_Y;
+            }
+            m_tween = this.add.tween(m_player).to({x: tempX, y: tempY}, duration, Phaser.Easing.Linear.None, true);
+
+            // Set a timer to stop the animation
+            this.time.events.add(duration, function () {
+                m_player.animations.stop('player_walking');
+                m_player.animations.play('player_idle');
+                this.interacting = false;
+            }, game);
+        }
     },
 
     refillPot: function(){
@@ -184,61 +198,49 @@ var moonLanding = {
         }
     },
 
-    movePlayer: function(pointer) {
-        if (!this.interacting) {
-            this.interacting = true;
-            // Cancel any movement that is currently happening
-            if (tween && tween.isRunning) {
-                tween.stop();
-            }
-
-            // Flip the sprite and start the walking animation
-            if (this.input.worldX >= player.body.x) {
-                player.scale.x = 1;
-            } else {
-                player.scale.x = -1;
-            }
-            player.animations.play('player_walking', true);
-
-            // Determine the time it will take to get to the pointer
-            var duration = (this.physics.arcade.distanceToPointer(player, pointer) / this.PLAYER_SPEED) * 1000;
-            // Start tween movement towards pointer
-            var tempX = this.input.worldX;
-            var tempY = this.input.worldY;
-            if (tempX < this.PLAYER_MIN_X) {
-                tempX = this.PLAYER_MIN_X;
-            }
-            else if (tempX > this.PLAYER_MAX_X) {
-                tempX = this.PLAYER_MAX_X;
-            }
-            if (tempY < this.PLAYER_MIN_Y) {
-                tempY = this.PLAYER_MIN_Y;
-            }
-            else if (tempY > this.PLAYER_MAX_Y) {
-                tempY = this.PLAYER_MAX_Y;
-            }
-            tween = this.add.tween(player).to({x: tempX, y: tempY}, duration, Phaser.Easing.Linear.None, true);
-
-            // Set a timer to stop the animation
-            this.time.events.add(duration, function () {
-                player.animations.stop('player_walking');
-                player.animations.play('player_idle');
-                this.interacting = false;
-            }, this);
+    createCustomer: function(filename){
+        var x = Math.floor(Math.random()*200)+100, t_scale = 1, y = 130, side = -100;
+        if (Math.random() < 0.5){
+            x += 900;
+            side = 1444;
+            t_scale = -1;
         }
+        y += Math.floor(Math.random()*520);
+
+        var customer = this.add.sprite(side, y, filename);
+        customer.animations.add(filename+'_walking',[0,1,2,3], 6, true);
+        customer.animations.add(filename+'_idle',[1], 6, true);
+        customer.animations.play(filename+'_walking');
+        customer.anchor.setTo(.5,.5);
+
+        //add the bubble demanding coffee and set it up to be a child of the customer
+        var speech_bubble = this.add.sprite(0, -175, "cup_refill");
+        customer.addChild(speech_bubble);
+        customer.scale.x = t_scale;
+
+        var duration = (this.physics.arcade.distanceToXY(customer, x, y) / this.PLAYER_SPEED) * 1000;
+        this.add.tween(customer).to({ x:x, y:y }, duration, Phaser.Easing.Linear.None, true);
+        this.time.events.add(duration, function() {
+            customer.animations.stop(filename+'_walking');
+            customer.animations.play(filename+'_idle');}, game);
+
+        game.physics.arcade.enable(customer);
+
+        customerGroup.add(customer);
+        return customer;
     },
 
     updateUI: function() {
         // Update the text position as the camera moves
-        timeText.x = this.camera.x+this.camera.width-170;
-        timeText.y = this.camera.height-100;
-        scoreText.x = this.camera.x+this.camera.width-170;
-        scoreText.y = this.camera.height-50;
+        m_timeText.x = this.camera.x+this.camera.width-170;
+        m_timeText.y = this.camera.height-100;
+        m_scoreText.x = this.camera.x+this.camera.width-170;
+        m_scoreText.y = this.camera.height-50;
     },
 
     secondTick: function() {
         this.time_left -= 1;
-        timeText.text = 'Time Rem: ' + this.time_left;
+        m_timeText.text = 'Time Rem: ' + this.time_left;
         if (this.time_left == 0) {
             this.GameOver();
         } else {
@@ -252,14 +254,6 @@ var moonLanding = {
         createReturn();
     },
 
-    createReturn: function() {
-        var return_button = game.add.sprite(1150,600,'return_button');
-        return_button.events.onInputDown.add(function() {
-            game.state.start('menu');
-        },this); 
-        return_button.anchor.setTo(0.5, 0.5);
-    },
-
     resetLevel: function() {
         this.fade();
         fading = true;
@@ -271,8 +265,8 @@ var moonLanding = {
 
     resetFade: function() {
         this.camera.resetFX();
-        player.body.x = this.PLAYER_START_X - 50;
-        player.body.y = this.PLAYER_START_Y - 50;
+        m_player.body.x = this.PLAYER_START_X - 50;
+        m_player.body.y = this.PLAYER_START_Y - 50;
         fading = false;
     },
 
