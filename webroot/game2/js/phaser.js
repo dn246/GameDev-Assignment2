@@ -32195,10 +32195,10 @@ Phaser.Group = function (game, parent, name, addToStage, enableBody, physicsBody
     this.classType = Phaser.Sprite;
 
     /**
-    * The current display object that the group cursor is pointing to, if any. (Can be set manually.)
+    * The current display object that the group cursors is pointing to, if any. (Can be set manually.)
     *
-    * The cursor is a way to iterate through the children in a Group using {@link #next} and {@link #previous}.
-    * @property {?DisplayObject} cursor
+    * The cursors is a way to iterate through the children in a Group using {@link #next} and {@link #previous}.
+    * @property {?DisplayObject} cursors
     */
     this.cursor = null;
 
@@ -32314,7 +32314,7 @@ Phaser.Group = function (game, parent, name, addToStage, enableBody, physicsBody
     this.onDestroy = new Phaser.Signal();
 
     /**
-    * @property {integer} cursorIndex - The current index of the Group cursor. Advance it with Group.next.
+    * @property {integer} cursorIndex - The current index of the Group cursors. Advance it with Group.next.
     * @readOnly
     */
     this.cursorIndex = 0;
@@ -32869,13 +32869,13 @@ Phaser.Group.prototype.align = function (width, height, cellWidth, cellHeight, p
 };
 
 /**
-* Sets the group cursor to the first child in the group.
+* Sets the group cursors to the first child in the group.
 *
-* If the optional index parameter is given it sets the cursor to the object at that index instead.
+* If the optional index parameter is given it sets the cursors to the object at that index instead.
 *
 * @method Phaser.Group#resetCursor
-* @param {integer} [index=0] - Set the cursor to point to a specific index.
-* @return {any} The child the cursor now points to.
+* @param {integer} [index=0] - Set the cursors to point to a specific index.
+* @return {any} The child the cursors now points to.
 */
 Phaser.Group.prototype.resetCursor = function (index) {
 
@@ -32896,18 +32896,18 @@ Phaser.Group.prototype.resetCursor = function (index) {
 };
 
 /**
-* Advances the group cursor to the next (higher) object in the group.
+* Advances the group cursors to the next (higher) object in the group.
 *
-* If the cursor is at the end of the group (top child) it is moved the start of the group (bottom child).
+* If the cursors is at the end of the group (top child) it is moved the start of the group (bottom child).
 *
 * @method Phaser.Group#next
-* @return {any} The child the cursor now points to.
+* @return {any} The child the cursors now points to.
 */
 Phaser.Group.prototype.next = function () {
 
     if (this.cursor)
     {
-        //  Wrap the cursor?
+        //  Wrap the cursors?
         if (this.cursorIndex >= this.children.length - 1)
         {
             this.cursorIndex = 0;
@@ -32925,18 +32925,18 @@ Phaser.Group.prototype.next = function () {
 };
 
 /**
-* Moves the group cursor to the previous (lower) child in the group.
+* Moves the group cursors to the previous (lower) child in the group.
 *
-* If the cursor is at the start of the group (bottom child) it is moved to the end (top child).
+* If the cursors is at the start of the group (bottom child) it is moved to the end (top child).
 *
 * @method Phaser.Group#previous
-* @return {any} The child the cursor now points to.
+* @return {any} The child the cursors now points to.
 */
 Phaser.Group.prototype.previous = function () {
 
     if (this.cursor)
     {
-        //  Wrap the cursor?
+        //  Wrap the cursors?
         if (this.cursorIndex === 0)
         {
             this.cursorIndex = this.children.length - 1;
@@ -34498,7 +34498,7 @@ Phaser.Group.prototype.getAll = function (property, value, startIndex, endIndex)
 *
 * This will dispatch an `onRemovedFromGroup` event from the child (if it has one), and optionally destroy the child.
 *
-* If the group cursor was referring to the removed child it is updated to refer to the next child.
+* If the group cursors was referring to the removed child it is updated to refer to the next child.
 *
 * @method Phaser.Group#remove
 * @param {any} child - The child to remove.
@@ -40524,16 +40524,16 @@ Object.defineProperty(Phaser.Pointer.prototype, "worldY", {
 Phaser.PointerMode = {
 
     /**
-    * A 'CURSOR' is a pointer with a *passive cursor* such as a mouse, touchpad, watcom stylus, or even TV-control arrow-pad.
+    * A 'CURSOR' is a pointer with a *passive cursors* such as a mouse, touchpad, watcom stylus, or even TV-control arrow-pad.
     *
-    * It has the property that a cursor is passively moved without activating the input.
+    * It has the property that a cursors is passively moved without activating the input.
     * This currently corresponds with {@link Phaser.Pointer#isMouse} property.
     * @constant
     */
     CURSOR: 1 << 0,
 
     /**
-    * A 'CONTACT' pointer has an *active cursor* that only tracks movement when actived; notably this is a touch-style input.
+    * A 'CONTACT' pointer has an *active cursors* that only tracks movement when actived; notably this is a touch-style input.
     * @constant
     */
     CONTACT: 1 << 1
@@ -41051,13 +41051,13 @@ Phaser.InputHandler = function (sprite) {
     this.priorityID = 0;
 
     /**
-    * @property {boolean} useHandCursor - On a desktop browser you can set the 'hand' cursor to appear when moving over the Sprite.
+    * @property {boolean} useHandCursor - On a desktop browser you can set the 'hand' cursors to appear when moving over the Sprite.
     * @default
     */
     this.useHandCursor = false;
 
     /**
-    * @property {boolean} _setHandCursor - Did this Sprite trigger the hand cursor?
+    * @property {boolean} _setHandCursor - Did this Sprite trigger the hand cursors?
     * @private
     */
     this._setHandCursor = false;
@@ -41292,7 +41292,7 @@ Phaser.InputHandler.prototype = {
     * 
     * @method Phaser.InputHandler#start
     * @param {number} [priority=0] - Higher priority sprites take click priority over low-priority sprites when they are stacked on-top of each other.
-    * @param {boolean} [useHandCursor=false] - If true the Sprite will show the hand cursor on mouse-over (doesn't apply to mobile browsers)
+    * @param {boolean} [useHandCursor=false] - If true the Sprite will show the hand cursors on mouse-over (doesn't apply to mobile browsers)
     * @return {Phaser.Sprite} The Sprite object to which the Input Handler is bound.
     */
     start: function (priority, useHandCursor) {
@@ -81464,7 +81464,7 @@ Phaser.Device.whenReady(function (device) {
 Phaser.ArraySet = function (list) {
 
     /**
-    * Current cursor position as established by `first` and `next`.
+    * Current cursors position as established by `first` and `next`.
     * @property {integer} position
     * @default
     */

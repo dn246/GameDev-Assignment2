@@ -1,74 +1,32 @@
 //MiniGame where you play simon says with ShayJay to stop the rain
-var MOVE_DURATION = 1500;
-var LEFT_ANIM = 0;
-var DOWN_ANIM = 1;
-var RIGHT_ANIM = 2;
-var UP_ANIM = 3;
 
-// Object declarations
-var background;
-var player;
-var shirley;
-var cursors;
-var scoreText;
-var timeText;
-var emitter;
 
-// Variable declarations
-var score = 50;
-var can_swipe = true;
-var tween;
-var duration = 0;
-var level = -1;
-var curr_i = 0;
-var time_left = 10;
-var player_turn = false;
-var dance_moves = [[0],[0,1],[0,1,2],[0,1,2,3]];
-var your_moves = [];
-var game_over = false;
-/*
- dance_moves = ...
- index = 0    index = 1    index = 2
- +--------------------------------------+
- level = 0 |danceMove(n)|            |            |
- level = 1 |danceMove(n)|danceMove(n)|            |
- level = 2 |danceMove(n)|danceMove(n)|danceMove(n)|
- +--------------------------------------+
- */
-
-// Sound declarations
-var fx_boo;
-var fx_cheer;
-var fx_clock_buzzer;
-var fx_incorrect;
-var fx_thunder_storm;
-var fx_click;
 
 var rpi_game = {
 
     preload: function() {
-        this.load.image('rpi_background', 'assets/images/rain_dance_background_01.png');
-        this.load.image('rpi_background_light', 'assets/images/rain_dance_background_02.png');
-        this.load.image('swipe_arrow', 'assets/images/rain_dance_arrow_swipe.png');
-        this.load.image('return_button', 'assets/images/button_return_notebook.png');
-        this.load.image('rain', 'assets/images/rain.png');
-        this.load.spritesheet('player_dancing', 'assets/images/rain_dance_player_sprite.png', 136, 156);
-        this.load.spritesheet('shirley_dancing', 'assets/images/rain_dance_the_honorable_sprite.png', 156, 180);
+        rpi_game.load.image('rpi_background', 'assets/images/rain_dance_background_01.png');
+        rpi_game.load.image('rpi_background_light', 'assets/images/rain_dance_background_02.png');
+        rpi_game.load.image('swipe_arrow', 'assets/images/rain_dance_arrow_swipe.png');
+        rpi_game.load.image('return_button', 'assets/images/button_return_notebook.png');
+        rpi_game.load.image('rain', 'assets/images/rain.png');
+        rpi_game.load.spritesheet('player_dancing', 'assets/images/rain_dance_player_sprite.png', 136, 156);
+        rpi_game.load.spritesheet('shirley_dancing', 'assets/images/rain_dance_the_honorable_sprite.png', 156, 180);
 
-        this.load.audio('boo', 'assets/sounds/boo.wav');
-        this.load.audio('cheer', 'assets/sounds/cheer.wav');
-        this.load.audio('clock_buzzer', 'assets/sounds/clock_buzzer.wav');
-        this.load.audio('incorrect', 'assets/sounds/incorrect.wav');
-        this.load.audio('thunder_storm', 'assets/sounds/thunder_storm.wav');
-        this.load.audio('click', 'assets/sounds/click.wav');
+        rpi_game.load.audio('boo', 'assets/sounds/boo.wav');
+        rpi_game.load.audio('cheer', 'assets/sounds/cheer.wav');
+        rpi_game.load.audio('clock_buzzer', 'assets/sounds/clock_buzzer.wav');
+        rpi_game.load.audio('incorrect', 'assets/sounds/incorrect.wav');
+        rpi_game.load.audio('thunder_storm', 'assets/sounds/thunder_storm.wav');
+        rpi_game.load.audio('click', 'assets/sounds/click.wav');
     },
 
     create: function() {
         // Add the group of backgrounds to the game
-        background = this.add.sprite(0,0,'rpi_background');
+        backgrounds = rpi_game.add.sprite(0,0,'rpi_background');
 
         // Set up m_player sprite and animation
-        player = this.add.sprite (445,600,'player_dancing');
+        player = rpi_game.add.sprite (445,600,'player_dancing');
         player.animations.add('dancing_left',  [6], 1, true);
         player.animations.add('dancing_down',  [3], 1, true);
         player.animations.add('dancing_right', [5], 1, true);
@@ -76,15 +34,15 @@ var rpi_game = {
         player.anchor.setTo(0.5, 0.5);
 
         // Set up shirley's sprite and animation
-        shirley = this.add.sprite (890,600,'shirley_dancing');
+        shirley = rpi_game.add.sprite (890,600,'shirley_dancing');
         shirley.animations.add('dancing_left',  [6], 1, true);
         shirley.animations.add('dancing_down',  [3], 1, true);
         shirley.animations.add('dancing_right', [5], 1, true);
         shirley.animations.add('dancing_up',    [4], 1, true);
         shirley.anchor.setTo(0.5, 0.5);
 
-        emitter = this.add.emitter(game.world.centerX, -200, 400);
-        emitter.width = this.world.width;
+        emitter = rpi_game.add.emitter(game.world.centerX, -200, 400);
+        emitter.width = rpi_game.world.width;
         //emitter.angle = 30; // uncomment to set an angle for the rain.
 
         emitter.makeParticles('rain');
@@ -249,21 +207,21 @@ var rpi_game = {
     },
 
     ShirleyDanceMove: function() {
-        this.time.events.add(MOVE_DURATION * curr_i, function() {
-            this.danceMove(shirley, dance_moves[level][curr_i]);
+        rpi_game.time.events.add(MOVE_DURATION * curr_i, function() {
+            rpi_game.danceMove(shirley, dance_moves[level][curr_i]);
             console.log("SHIRLEY DANCE ANIM START " + dance_moves[level][curr_i]);
             curr_i++;
             if (curr_i < dance_moves[level].length) {
-                this.ShirleyDanceMove();
+                rpi_game.ShirleyDanceMove();
             }
         }, game);
     },
 
     danceMove: function(character, i) {
         if (character == player) {
-            this.time.events.add(MOVE_DURATION, this.checkMoves, game);
+            rpi_game.time.events.add(MOVE_DURATION, rpi_game.checkMoves, game);
         } else {
-            this.swipeArrow(i);
+            rpi_game.swipeArrow(i);
         }
 
         if (i == 0) {
@@ -279,7 +237,7 @@ var rpi_game = {
 
     swipeArrow:function(dir) {
         var moveX = 667, moveY = 375;
-        var arrow = this.add.sprite(moveX,moveY,'swipe_arrow');
+        var arrow = rpi_game.add.sprite(moveX,moveY,'swipe_arrow');
         arrow.anchor.setTo(0.5,0.5);
         arrow.scale.x = 0;
         arrow.scale.y = 0;
@@ -303,7 +261,7 @@ var rpi_game = {
         game.add.tween(arrow).to({ alpha : 0 }, MOVE_DURATION, "Sine.easeInOut", true);
         game.time.events.add(MOVE_DURATION, function() {
             arrow.kill();
-        }, this);
+        }, rpi_game);
     },
 
     GameOver: function() {
@@ -312,7 +270,7 @@ var rpi_game = {
         player_turn = false;
         if (score == 0) {
             fx_cheer.play();
-            background = this.add.sprite(0,0,'rpi_background_light');
+            backgrounds = rpi_game.add.sprite(0,0,'rpi_background_light');
         } else {
             fx_boo.play();
         }

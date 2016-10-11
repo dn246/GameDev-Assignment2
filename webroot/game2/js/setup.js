@@ -3,32 +3,110 @@
 var game = new Phaser.Game(1334, 750, Phaser.AUTO, '',
     { preload: preload, create: create, update: update, render: render });
 
+//MAIN MENU VARIABLES
+var bookTitleStyle = { font: "24px Arial", fill: "#000000", align: "center"};
+
+//ALL GAME VARIABLES
+var player;
+var interacting = false;
+var cursors;
+var scoreText;
+var timeText;
+var tween;
+var allGroup;
+var fading = false;
+var backgrounds;
+var score = 0;
+var duration = 0;
+var time_left = 10;
+var PLAYER_SPEED = 300;
+var PLAYER_START_X = 100;
+var PLAYER_START_Y = 410;
+
+//MOON LANDING GAME VARIABLES
+var coffeePot;
+var moon_set;
+var customerGroup;
+
+// 9 / 11 GAME VARIABLES
+var TRASH_X_MIN = 100;
+var TRASH_X_RANGE = 1200;
+var TRASH_Y_MIN = 410;
+var TRASH_Y_RANGE = 200;
+var CLEAN_TIME = 400;
+var tables;
+var trash;
+var foregrounds;
+var timer;
+var tv;
+var remote;
+var seamless_total = 1;
+var cleaning = false;
+var clean_click = false;
+
+// RAIN DANCE GAME VARIABLES
+var MOVE_DURATION = 1500;
+var LEFT_ANIM = 0;
+var DOWN_ANIM = 1;
+var RIGHT_ANIM = 2;
+var UP_ANIM = 3;
+var shirley;
+var emitter;
+var can_swipe = true;
+var level = -1;
+var curr_i = 0;
+var player_turn = false;
+var dance_moves = [[0],[0,1],[0,1,2],[0,1,2,3]];
+var your_moves = [];
+var game_over = false;
+/*
+ dance_moves = ...
+ index = 0    index = 1    index = 2
+ +--------------------------------------+
+ level = 0 |danceMove(n)|            |            |
+ level = 1 |danceMove(n)|danceMove(n)|            |
+ level = 2 |danceMove(n)|danceMove(n)|danceMove(n)|
+ +--------------------------------------+
+ */
+
+// Sound declarations
+var fx_boo;
+var fx_cheer;
+var fx_cleaning;
+var fx_click;
+var fx_clock_buzzer;
+var fx_incorrect;
+var fx_thunder_storm;
+var fx_tv_click;
+
+
+game.state.add('menu',mainMenu);
+game.state.add('moon',moonLanding);
+game.state.add('9/11',nineEleven);
+game.state.add('rain',rpi_game);
+
+game.state.start('menu');
+
 //blank statements for use by other files
 function preload() {
 
 }
-
 function create() {
-	game.state.add('menu',mainMenu);
-	game.state.add('moon_landing',moonLanding);
-	game.state.add('nine_eleven',nineEleven);
-	game.state.add('rpi_game',rpi_game);
 
-	game.state.start('rpi_game');
 }
-
 function update() {
 
 }
-
 function render() {
 
 }
 
+//used by each game to return to main menu upon completion
 function createReturn() {
 	var return_button = game.add.sprite(1150,600,'return_button');
+    return_button.inputEnabled = true;
 	return_button.events.onInputDown.add(function() {
 		game.state.start('menu');
-	},this);
+	});
 	return_button.anchor.setTo(0.5, 0.5);
 }

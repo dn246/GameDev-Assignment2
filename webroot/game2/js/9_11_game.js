@@ -1,42 +1,5 @@
 //A table cleaning minigame in a seamless, endless situation room before the 9/11 crisis
 
-var PLAYER_SPEED = 300;
-var PLAYER_START_X = 100;
-var PLAYER_START_Y = 410;
-var TRASH_X_MIN = 100;
-var TRASH_X_RANGE = 1200;
-var TRASH_Y_MIN = 410;
-var TRASH_Y_RANGE = 200;
-var CLEAN_TIME = 400;
-
-// Object declarations
-var backgrounds;
-var tables;
-var player;
-var trash;
-var foregrounds;
-var cursors;
-var scoreText;
-var timeText;
-var timer;
-var tv;
-var remote;
-var allGroup;
-
-// Variable declarations
-var fading = false;
-var score = 0;
-var time_left = 30;
-var seamless_total = 1;
-var tween;
-var duration = 0;
-var cleaning = false;
-var clean_click = false;
-
-// Sound declarations
-var fx_cleaning;
-var fx_clock_buzzer;
-var fx_tv_click;
 
 var nineEleven = {
 
