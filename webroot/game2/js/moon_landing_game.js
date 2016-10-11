@@ -18,6 +18,7 @@ var cursor;
 var scoreText;
 var timeText;
 var tween;
+var allGroup;
 
 var fading = false;
 var score = 0;
@@ -66,13 +67,13 @@ var moonLanding = {
         player.addChild(coffeePot);
 
         //cameraman wants coffee...why doesn't he get it himself, he's on break...
-        this.createCustomer('cameraMan');
+        cameraMan = this.createCustomer('cameraMan');
 
         //director wants coffee, better be quick
-        this.createCustomer('director');
+        director = this.createCustomer('director');
 
         //janitor wants coffee, cool dude
-        this.createCustomer('janitor');
+        janitor = this.createCustomer('janitor');
 
         // Set up text box for timer and score variable in UI
         var timeStyle = { font: "24px Arial", fill: "#000000", align: "left"};
@@ -86,10 +87,15 @@ var moonLanding = {
         cursor = this.input.pointer1;
         this.camera.onFadeComplete.add(this.resetFade, this);
 
-
-
         // Start the timer for the level
         this.time.events.add(Phaser.Timer.SECOND, this.secondTick, this);
+
+        // add the elements to the allGroup for depth sorting
+        allGroup = game.add.group();
+        allGroup.add(player);
+        allGroup.add(cameraMan);
+        allGroup.add(director);
+        allGroup.add(janitor);
     },
 
     createCustomer: function(filename){
@@ -129,6 +135,7 @@ var moonLanding = {
 
 
         this.updateUI();
+        allGroup.sort('y', Phaser.Group.SORT_ASCENDING);
     },
 
     movePlayer: function(pointer) {
@@ -182,8 +189,8 @@ var moonLanding = {
         if (potCups === 0) {
             coffeePot.animations.play('filling');
             potCups = 5;
-        }else {
-            console.log("not at 0 cups fuck off");
+        } else {
+            console.log("not at 0 cups");
         }
     },
 
