@@ -1,13 +1,5 @@
 // MiniGame for moonLanding conspiracy, basically DinerDash...
 
-PLAYER_SPEED = 300;
-PLAYER_START_X = 670;
-PLAYER_START_Y = 320;
-PLAYER_MAX_X = 1275;
-PLAYER_MAX_Y = 650;
-PLAYER_MIN_X = 65;
-PLAYER_MIN_Y = 130;
-
 var player;
 var coffeePot;
 var cameraMan;
@@ -18,12 +10,20 @@ var cursor;
 var scoreText;
 var timeText;
 var tween;
+var customerGroup;
 var allGroup;
 
 var fading = false;
 
 var moonLanding = {
 
+    PLAYER_SPEED: 300,
+    PLAYER_START_X: 670,
+    PLAYER_START_Y: 320,
+    PLAYER_MAX_X: 1275,
+    PLAYER_MAX_Y: 650,
+    PLAYER_MIN_X: 65,
+    PLAYER_MIN_Y: 130,
     interacting: false,
     score: 0,
     time_left: 90,
@@ -54,8 +54,8 @@ var moonLanding = {
         moon_set.create(0,0,'moon_set');
 
         // Set up player sprite and animation
-        player = this.add.sprite (PLAYER_START_X,PLAYER_START_Y,'player_walk');
-        player.animations.add('player_walking', [0,1,2,3,4,5,6,7], 10, true);
+        player = this.add.sprite (this.PLAYER_START_X,this.PLAYER_START_Y,'player_walk');
+        player.animations.add('player_walking', [0,1,2,3,4,5,6,7], 60, true);
         player.animations.add('player_idle', [0], 6, true);
         player.anchor.setTo(0.5, 0.5);
         this.input.onDown.add(this.movePlayer, this);
@@ -71,6 +71,8 @@ var moonLanding = {
         coffeePot.animations.add('0', [5], 6, true);
         player.addChild(coffeePot);
 
+
+        customerGroup = this.add.group();
         //cameraman wants coffee...why doesn't he get it himself, he's on break...
         cameraMan = this.createCustomer('cameraMan');
 
@@ -88,7 +90,7 @@ var moonLanding = {
 
         // Set up game physics, keyboard input, camera fade listener
         game.physics.arcade.enable(player);
-        //cursor = game.input.mousePointer;
+        game.physics.arcade.enable(customerGroup);
         cursor = this.input.pointer1;
         this.camera.onFadeComplete.add(this.resetFade, this);
 
@@ -123,7 +125,7 @@ var moonLanding = {
         customer.addChild(speech_bubble);
         customer.scale.x = t_scale;
 
-        var duration = (this.physics.arcade.distanceToXY(customer, x, y) / PLAYER_SPEED) * 1000;
+        var duration = (this.physics.arcade.distanceToXY(customer, x, y) / this.PLAYER_SPEED) * 1000;
         this.add.tween(customer).to({ x:x, y:y }, duration, Phaser.Easing.Linear.None, true);
         this.time.events.add(duration, function() {
             customer.animations.stop(filename+'_walking');
@@ -131,6 +133,7 @@ var moonLanding = {
 
         game.physics.arcade.enable(customer);
 
+        customerGroup.add(customer);
         return customer;
     },
 
@@ -139,7 +142,14 @@ var moonLanding = {
         if (player.x > 570 && player.x < 760 && player.y < 220){
             this.refillPot();
         }
-        game.physics.arcade.overlap(player,director, this.refillCup, null, this)
+        customerGroup.forEach(function(customer) {
+            console.log(typeof customer);
+            game.physics.arcade.overlap(player, customer, function(){console.log("suck it");},null, this);
+            /*if (this.checkOverlap(player, customer)){
+                this.refillCup(customer);
+            }*/
+        });
+
 
 
         this.updateUI();
@@ -164,11 +174,13 @@ var moonLanding = {
             if (this.potCups > 0) {
                 this.potCups -= 1;
                 coffeePot.animations.play(this.potCups.toString());
+                customerGroup.remove(customer);
+                //customer.kill();
+
             } else {
                 console.log("you have no coffee! GO GET SOME!!!");
             }
         }
-
     },
 
     movePlayer: function(pointer) {
@@ -188,21 +200,21 @@ var moonLanding = {
             player.animations.play('player_walking', true);
 
             // Determine the time it will take to get to the pointer
-            var duration = (this.physics.arcade.distanceToPointer(player, pointer) / PLAYER_SPEED) * 1000;
+            var duration = (this.physics.arcade.distanceToPointer(player, pointer) / this.PLAYER_SPEED) * 1000;
             // Start tween movement towards pointer
             var tempX = this.input.worldX;
             var tempY = this.input.worldY;
-            if (tempX < PLAYER_MIN_X) {
-                tempX = PLAYER_MIN_X;
+            if (tempX < this.PLAYER_MIN_X) {
+                tempX = this.PLAYER_MIN_X;
             }
-            else if (tempX > PLAYER_MAX_X) {
-                tempX = PLAYER_MAX_X;
+            else if (tempX > this.PLAYER_MAX_X) {
+                tempX = this.PLAYER_MAX_X;
             }
-            if (tempY < PLAYER_MIN_Y) {
-                tempY = PLAYER_MIN_Y;
+            if (tempY < this.PLAYER_MIN_Y) {
+                tempY = this.PLAYER_MIN_Y;
             }
-            else if (tempY > PLAYER_MAX_Y) {
-                tempY = PLAYER_MAX_Y;
+            else if (tempY > this.PLAYER_MAX_Y) {
+                tempY = this.PLAYER_MAX_Y;
             }
             tween = this.add.tween(player).to({x: tempX, y: tempY}, duration, Phaser.Easing.Linear.None, true);
 
@@ -221,15 +233,6 @@ var moonLanding = {
         timeText.y = this.camera.height-100;
         scoreText.x = this.camera.x+this.camera.width-170;
         scoreText.y = this.camera.height-50;
-    },
-
-    refillPot: function(){
-        if (potCups === 0) {
-            coffeePot.animations.play('filling');
-            potCups = 5;
-        } else {
-            console.log("not at 0 cups");
-        }
     },
 
     secondTick: function() {
@@ -259,8 +262,8 @@ var moonLanding = {
 
     resetFade: function() {
         this.camera.resetFX();
-        player.body.x = PLAYER_START_X - 50;
-        player.body.y = PLAYER_START_Y - 50;
+        player.body.x = this.PLAYER_START_X - 50;
+        player.body.y = this.PLAYER_START_Y - 50;
         fading = false;
     },
 

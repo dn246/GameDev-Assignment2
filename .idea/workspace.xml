@@ -2,26 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="26b0ed8b-d63e-48a8-a681-5a10d96f0177" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/webroot/game2/assets/sounds/bird_chirps.wav" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/webroot/game2/assets/sounds/clock_buzzer.wav" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/webroot/game2/assets/sounds/Bird Chirps.mp3" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/webroot/game2/assets/sounds/Buzzer(When Clock Expires).mp3" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/webroot/game2/assets/sounds/'Ding'.wav" afterPath="$PROJECT_DIR$/webroot/game2/assets/sounds/ding.wav" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/webroot/game2/assets/sounds/Coffee Beans (For Prep Coffee).wav" afterPath="$PROJECT_DIR$/webroot/game2/assets/sounds/coffee_grind.wav" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/webroot/game2/assets/sounds/Coffee Pour.wav" afterPath="$PROJECT_DIR$/webroot/game2/assets/sounds/coffee_pour.wav" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/webroot/game2/assets/sounds/Crowd Booing.wav" afterPath="$PROJECT_DIR$/webroot/game2/assets/sounds/boo.wav" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/webroot/game2/assets/sounds/Crowd Cheering.wav" afterPath="$PROJECT_DIR$/webroot/game2/assets/sounds/cheer.wav" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/webroot/game2/assets/sounds/Moon Landing Quote.wav" afterPath="$PROJECT_DIR$/webroot/game2/assets/sounds/moon_quote.wav" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/webroot/game2/assets/sounds/Page Turn.wav" afterPath="$PROJECT_DIR$/webroot/game2/assets/sounds/page_turn.wav" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/webroot/game2/assets/sounds/RainStorm(Thunder).wav" afterPath="$PROJECT_DIR$/webroot/game2/assets/sounds/thunder_storm.wav" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/webroot/game2/assets/sounds/TV Click on.wav" afterPath="$PROJECT_DIR$/webroot/game2/assets/sounds/tv_click.wav" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/webroot/game2/assets/sounds/Wiping&amp;Cleaning.wav" afterPath="$PROJECT_DIR$/webroot/game2/assets/sounds/cleaning.wav" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/webroot/game2/assets/sounds/WrongMoveBuzzer.wav" afterPath="$PROJECT_DIR$/webroot/game2/assets/sounds/incorrect.wav" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/webroot/game2/js/9_11_game.js" afterPath="$PROJECT_DIR$/webroot/game2/js/9_11_game.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/webroot/game2/js/menu.js" afterPath="$PROJECT_DIR$/webroot/game2/js/menu.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/webroot/game2/js/moon_landing_game.js" afterPath="$PROJECT_DIR$/webroot/game2/js/moon_landing_game.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/webroot/game2/js/rpi_game.js" afterPath="$PROJECT_DIR$/webroot/game2/js/rpi_game.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/webroot/game2/js/setup.js" afterPath="$PROJECT_DIR$/webroot/game2/js/setup.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/webroot/game2/menu.html" afterPath="$PROJECT_DIR$/webroot/game2/menu.html" />
     </list>
     <ignored path="game2.iws" />
@@ -48,11 +30,9 @@
       <file leaf-file-name="9_11_game.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/webroot/game2/js/9_11_game.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3102">
-              <caret line="141" column="47" selection-start-line="141" selection-start-column="47" selection-end-line="141" selection-end-column="47" />
-              <folding>
-                <marker date="1476199507041" expanded="true" signature="10786:10788" ph="{...}" />
-              </folding>
+            <state relative-caret-position="223">
+              <caret line="222" column="49" selection-start-line="222" selection-start-column="41" selection-end-line="222" selection-end-column="49" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -60,9 +40,11 @@
       <file leaf-file-name="moon_landing_game.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/webroot/game2/js/moon_landing_game.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3454">
-              <caret line="233" column="0" selection-start-line="233" selection-start-column="0" selection-end-line="233" selection-end-column="0" />
-              <folding />
+            <state relative-caret-position="1603">
+              <caret line="146" column="104" selection-start-line="146" selection-start-column="104" selection-end-line="146" selection-end-column="104" />
+              <folding>
+                <element signature="e#538#1433#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -80,8 +62,8 @@
       <file leaf-file-name="menu.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/webroot/game2/menu.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="44">
-              <caret line="2" column="10" selection-start-line="2" selection-start-column="10" selection-end-line="2" selection-end-column="10" />
+            <state relative-caret-position="198">
+              <caret line="9" column="72" selection-start-line="9" selection-start-column="72" selection-end-line="9" selection-end-column="72" />
               <folding />
             </state>
           </provider>
@@ -90,7 +72,7 @@
       <file leaf-file-name="setup.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/webroot/game2/js/setup.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="308">
+            <state relative-caret-position="506">
               <caret line="25" column="1" selection-start-line="25" selection-start-column="1" selection-end-line="25" selection-end-column="1" />
               <folding>
                 <element signature="n#!!block;n#render#0" expanded="false" />
@@ -127,8 +109,8 @@
         <option value="$PROJECT_DIR$/webroot/game2/setup.js" />
         <option value="$PROJECT_DIR$/webroot/game2/js/menu.js" />
         <option value="$PROJECT_DIR$/webroot/game2/js/setup.js" />
-        <option value="$PROJECT_DIR$/webroot/game2/menu.html" />
         <option value="$PROJECT_DIR$/webroot/game2/js/moon_landing_game.js" />
+        <option value="$PROJECT_DIR$/webroot/game2/menu.html" />
       </list>
     </option>
   </component>
@@ -384,12 +366,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1475511627393</updated>
-      <workItem from="1475511634204" duration="94696000" />
+      <workItem from="1475511634204" duration="99876000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="94696000" />
+    <option name="totallyTimeSpent" value="99876000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
@@ -573,24 +555,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/webroot/game2/menu.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="44">
-          <caret line="2" column="10" selection-start-line="2" selection-start-column="10" selection-end-line="2" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webroot/game2/js/setup.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="308">
-          <caret line="25" column="1" selection-start-line="25" selection-start-column="1" selection-end-line="25" selection-end-column="1" />
-          <folding>
-            <element signature="n#!!block;n#render#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/webroot/game2/js/menu.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="242">
@@ -599,21 +563,39 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/webroot/game2/js/setup.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="506">
+          <caret line="25" column="1" selection-start-line="25" selection-start-column="1" selection-end-line="25" selection-end-column="1" />
+          <folding>
+            <element signature="n#!!block;n#render#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webroot/game2/menu.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="9" column="72" selection-start-line="9" selection-start-column="72" selection-end-line="9" selection-end-column="72" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/webroot/game2/js/9_11_game.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3102">
-          <caret line="141" column="47" selection-start-line="141" selection-start-column="47" selection-end-line="141" selection-end-column="47" />
-          <folding>
-            <marker date="1476199507041" expanded="true" signature="10786:10788" ph="{...}" />
-          </folding>
+        <state relative-caret-position="223">
+          <caret line="222" column="49" selection-start-line="222" selection-start-column="41" selection-end-line="222" selection-end-column="49" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/webroot/game2/js/moon_landing_game.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3454">
-          <caret line="233" column="0" selection-start-line="233" selection-start-column="0" selection-end-line="233" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="1603">
+          <caret line="146" column="104" selection-start-line="146" selection-start-column="104" selection-end-line="146" selection-end-column="104" />
+          <folding>
+            <element signature="e#538#1433#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
