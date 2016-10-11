@@ -20,11 +20,13 @@ var timeText;
 var tween;
 
 var fading = false;
-var score = 0;
-var time_left = 90;
-var potCups = 5;
 
 var moonLanding = {
+
+    interacting: false,
+    score: 0,
+    time_left: 90,
+    potCups: 5,
 
     preload: function() {
         this.load.image('moon_set', 'assets/images/moon_landing_set.png');
@@ -38,8 +40,11 @@ var moonLanding = {
             226, 4, 0, 242);
         this.load.spritesheet('janitor', 'assets/images/janitor_walk_cycle.png', 159,
             204, 4, 0, 206);
-        this.load.image('pot_refill', 'assets/images/coffee_speech_bubble.png');
+        this.load.image('cup_refill', 'assets/images/coffee_speech_bubble.png');
+        this.load.image('happy', 'assets/images/smiley_face_speech_bubble.png');
+        this.load.image('sad', 'assets/images/sad_face_speech_bubble.png');
     },
+
     create: function() {
         this.world.setBounds(0, 0, 1334, 750);
 
@@ -57,22 +62,22 @@ var moonLanding = {
         //a coffee mug stuck on the player
         coffeePot = this.add.sprite (45,-45,'coffeeMug');
         coffeePot.animations.add('filling', [5,4,3,2,1,0], 2, true);
-        coffeePot.animations.add('full', [0], 6, true);
-        coffeePot.animations.add('fourCup', [1], 6, true);
-        coffeePot.animations.add('threeCup', [2], 6, true);
-        coffeePot.animations.add('twoCup', [3], 6, true);
-        coffeePot.animations.add('oneCup', [4], 6, true);
-        coffeePot.animations.add('empty', [5], 6, true);
+        coffeePot.animations.add('5', [0], 6, true);
+        coffeePot.animations.add('4', [1], 6, true);
+        coffeePot.animations.add('3', [2], 6, true);
+        coffeePot.animations.add('2', [3], 6, true);
+        coffeePot.animations.add('1', [4], 6, true);
+        coffeePot.animations.add('0', [5], 6, true);
         player.addChild(coffeePot);
 
         //cameraman wants coffee...why doesn't he get it himself, he's on break...
-        this.createCustomer('cameraMan');
+        cameraMan = this.createCustomer('cameraMan');
 
         //director wants coffee, better be quick
-        this.createCustomer('director');
+        director = this.createCustomer('director');
 
         //janitor wants coffee, cool dude
-        this.createCustomer('janitor');
+        janitor = this.createCustomer('janitor');
 
         // Set up text box for timer and score variable in UI
         var timeStyle = { font: "24px Arial", fill: "#000000", align: "left"};
@@ -81,7 +86,7 @@ var moonLanding = {
         scoreText = this.add.text(this.camera.x+this.camera.width-140, this.camera.height-50, 'Score: 0', scoreStyle);
 
         // Set up game physics, keyboard input, camera fade listener
-        this.physics.arcade.enable(player);
+        game.physics.arcade.enable(player);
         //cursor = game.input.mousePointer;
         cursor = this.input.pointer1;
         this.camera.onFadeComplete.add(this.resetFade, this);
@@ -108,7 +113,7 @@ var moonLanding = {
         customer.anchor.setTo(.5,.5);
 
         //add the bubble demanding coffee and set it up to be a child of the customer
-        var speech_bubble = this.add.sprite(0, -175, "pot_refill");
+        var speech_bubble = this.add.sprite(0, -175, "cup_refill");
         customer.addChild(speech_bubble);
         customer.scale.x = t_scale;
 
@@ -118,56 +123,89 @@ var moonLanding = {
             customer.animations.stop(filename+'_walking');
             customer.animations.play(filename+'_idle');}, this);
 
+        game.physics.arcade.enable(customer);
+
         return customer;
     },
 
     update: function() {
 
         if (player.x > 570 && player.x < 760 && player.y < 220){
-            refillPot();
+            this.refillPot();
         }
+        game.physics.arcade.overlap(player,director, this.refillCup, null, this)
 
 
         this.updateUI();
     },
 
+    refillPot: function(){
+        if (!this.interacting) {
+            this.interacting = true;
+            if (this.potCups === 0) {
+                coffeePot.animations.play('filling');
+                this.potCups = 5;
+                coffeePot.animations.play(this.potCups.toString());
+            } else {
+                console.log("not at 0 cups fuck off");
+            }
+        }
+    },
+
+    refillCup: function () {
+        if (!this.interacting) {
+            if (this.potCups > 0) {
+                this.potCups -= 1;
+                coffeePot.animations.play(this.potCups.toString());
+            } else {
+                console.log("you have no coffee! GO GET SOME!!!");
+            }
+        }
+
+    },
+
     movePlayer: function(pointer) {
-        // Cancel any movement that is currently happening
-        if (tween && tween.isRunning) {
-            tween.stop();
-        }
+        if (!this.interacting) {
+            this.interacting = true;
+            // Cancel any movement that is currently happening
+            if (tween && tween.isRunning) {
+                tween.stop();
+            }
 
-        // Flip the sprite and start the walking animation
-        if (this.input.worldX >= player.body.x) {
-            player.scale.x = 1;
-        } else {
-            player.scale.x = -1;
-        }
-        player.animations.play('player_walking', true);
+            // Flip the sprite and start the walking animation
+            if (this.input.worldX >= player.body.x) {
+                player.scale.x = 1;
+            } else {
+                player.scale.x = -1;
+            }
+            player.animations.play('player_walking', true);
 
-        // Determine the time it will take to get to the pointer
-        var duration = (this.physics.arcade.distanceToPointer(player, pointer) / PLAYER_SPEED) * 1000;
-        // Start tween movement towards pointer
-        var tempX = this.input.worldX;
-        var tempY = this.input.worldY;
-        if (tempX < PLAYER_MIN_X){
-            tempX = PLAYER_MIN_X;
-        }
-        else if(tempX > PLAYER_MAX_X){
-            tempX = PLAYER_MAX_X;
-        }
-        if (tempY < PLAYER_MIN_Y){
-            tempY = PLAYER_MIN_Y;
-        }
-        else if(tempY > PLAYER_MAX_Y){
-            tempY = PLAYER_MAX_Y;
-        }
-        tween = this.add.tween(player).to({ x:tempX, y:tempY }, duration, Phaser.Easing.Linear.None, true);
+            // Determine the time it will take to get to the pointer
+            var duration = (this.physics.arcade.distanceToPointer(player, pointer) / PLAYER_SPEED) * 1000;
+            // Start tween movement towards pointer
+            var tempX = this.input.worldX;
+            var tempY = this.input.worldY;
+            if (tempX < PLAYER_MIN_X) {
+                tempX = PLAYER_MIN_X;
+            }
+            else if (tempX > PLAYER_MAX_X) {
+                tempX = PLAYER_MAX_X;
+            }
+            if (tempY < PLAYER_MIN_Y) {
+                tempY = PLAYER_MIN_Y;
+            }
+            else if (tempY > PLAYER_MAX_Y) {
+                tempY = PLAYER_MAX_Y;
+            }
+            tween = this.add.tween(player).to({x: tempX, y: tempY}, duration, Phaser.Easing.Linear.None, true);
 
-        // Set a timer to stop the animation
-        this.time.events.add(duration, function() {
-            player.animations.stop('player_walking');
-            player.animations.play('player_idle');}, this);
+            // Set a timer to stop the animation
+            this.time.events.add(duration, function () {
+                player.animations.stop('player_walking');
+                player.animations.play('player_idle');
+                this.interacting = false;
+            }, this);
+        }
     },
 
     updateUI: function() {
@@ -178,19 +216,10 @@ var moonLanding = {
         scoreText.y = this.camera.height-50;
     },
 
-    refillPot: function(){
-        if (potCups === 0) {
-            coffeePot.animations.play('filling');
-            potCups = 5;
-        }else {
-            console.log("not at 0 cups fuck off");
-        }
-    },
-
     secondTick: function() {
-        time_left -= 1;
-        timeText.text = 'Time Rem: ' + time_left;
-        if (time_left == 0) {
+        this.time_left -= 1;
+        timeText.text = 'Time Rem: ' + this.time_left;
+        if (this.time_left == 0) {
             this.GameOver();
         } else {
             this.time.events.add(Phaser.Timer.SECOND, this.secondTick, this);
