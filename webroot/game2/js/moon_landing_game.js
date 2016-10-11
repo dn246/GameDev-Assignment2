@@ -18,6 +18,7 @@ var cursor;
 var scoreText;
 var timeText;
 var tween;
+var allGroup;
 
 var fading = false;
 
@@ -91,10 +92,15 @@ var moonLanding = {
         cursor = this.input.pointer1;
         this.camera.onFadeComplete.add(this.resetFade, this);
 
-
-
         // Start the timer for the level
         this.time.events.add(Phaser.Timer.SECOND, this.secondTick, this);
+
+        // add the elements to the allGroup for depth sorting
+        allGroup = this.add.group();
+        allGroup.add(player);
+        allGroup.add(cameraMan);
+        allGroup.add(director);
+        allGroup.add(janitor);
     },
 
     createCustomer: function(filename){
@@ -137,6 +143,7 @@ var moonLanding = {
 
 
         this.updateUI();
+        allGroup.sort('y', Phaser.Group.SORT_ASCENDING);
     },
 
     refillPot: function(){
@@ -214,6 +221,15 @@ var moonLanding = {
         timeText.y = this.camera.height-100;
         scoreText.x = this.camera.x+this.camera.width-170;
         scoreText.y = this.camera.height-50;
+    },
+
+    refillPot: function(){
+        if (potCups === 0) {
+            coffeePot.animations.play('filling');
+            potCups = 5;
+        } else {
+            console.log("not at 0 cups");
+        }
     },
 
     secondTick: function() {

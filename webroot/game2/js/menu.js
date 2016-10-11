@@ -18,6 +18,3 @@ var mainMenu = {
     },
     update: function () {}
 }
-
-
-
