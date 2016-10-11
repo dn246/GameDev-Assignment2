@@ -44,6 +44,7 @@ var nineEleven = {
         game.load.image('9_11_background', 'assets/images/9_11_background_dark.png');
         game.load.image('9_11_table', 'assets/images/9_11_seamless_table.png');
         game.load.image('9_11_foreground', 'assets/images/9_11_seamless_foreground.png');
+        game.load.image('return_button', 'assets/images/button_return_notebook.png');
         game.load.spritesheet('player_crawling', 'assets/images/9_11_player_sprite_2.png', 147, 120);
         game.load.spritesheet('trash', 'assets/images/9_11_trash_sprites.png', 92, 60);
         game.load.spritesheet('bubbles', 'assets/images/9_11_bubbles_small.png', 43, 30);
@@ -84,7 +85,7 @@ var nineEleven = {
         foregrounds.create(1334,0,'9_11_foreground');
 
         tv = game.add.sprite(430,-273,'tv');
-        tv.animations.add('video', [0,1,2,3,4], 10, true);
+        tv.animations.add('video', [0,1,2,3,4,5,6,7,8], 5, true);
 
         // Set up text box for timer and score variable in UI
         var timeStyle = { font: "24px Lucida Console", fill: "#ffffff", align: "left"};
@@ -290,7 +291,16 @@ var nineEleven = {
         game.add.tween(tv).to({ y: 50}, 3000, "Linear", true);
         game.time.events.add(3000, function() {
             tv.animations.play('video');
+            createReturn();
         }, this);
+    },
+
+    createReturn: function() {
+        var return_button = game.add.sprite(1150,600,'return_button');
+        return_button.events.onInputDown.add(function() {
+            game.state.start('menu');
+        },this); 
+        return_button.anchor.setTo(0.5, 0.5);
     },
 
     resetLevel: function() {

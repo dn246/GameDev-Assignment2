@@ -49,9 +49,10 @@ var rpi_game = {
         game.load.image('rpi_background', 'assets/images/rain_dance_background_01.png');
         game.load.image('rpi_background_light', 'assets/images/rain_dance_background_02.png');
         game.load.image('swipe_arrow', 'assets/images/rain_dance_arrow_swipe.png');
+        game.load.image('return_button', 'assets/images/button_return_notebook.png');
+        game.load.image('rain', 'assets/images/rain.png');
         game.load.spritesheet('player_dancing', 'assets/images/rain_dance_player_sprite.png', 136, 156);
         game.load.spritesheet('shirley_dancing', 'assets/images/rain_dance_the_honorable_sprite.png', 156, 180);
-        game.load.image('rain', 'assets/images/rain.png');
 
         game.load.audio('boo', 'assets/sounds/boo.wav');
         game.load.audio('cheer', 'assets/sounds/cheer.wav');
@@ -314,6 +315,15 @@ var rpi_game = {
         } else {
             fx_boo.play();
         }
+        createReturn();
+    },
+
+    createReturn: function() {
+        var return_button = game.add.sprite(1150,600,'return_button');
+        return_button.events.onInputDown.add(function() {
+            game.state.start('menu');
+        },this); 
+        return_button.anchor.setTo(0.5, 0.5);
     },
 
     updateScore:function(s) {
