@@ -4,15 +4,15 @@ var game = new Phaser.Game(1334, 750, Phaser.AUTO, '',
     { preload: preload, create: create, update: update, render: render });
 
 //MAIN MENU VARIABLES
-var bookTitleStyle = { font: "24px Bradley Hand ITC", fill: "#000000", align: "center",
+var bookTitleStyle = { font: "32px Bradley Hand ITC", fill: "#000000", align: "center",
     wordWrap: true, wordWrapWidth: 475};
 var bookTextStyle = { font: "20px Bradley Hand ITC", fill: "#000000", align: "left",
     wordWrap: true, wordWrapWidth: 475};
 var currentPage = 0;
 
-//CUTSCENE VARIABLES
-var cutSceneStyle = { font: "20px Arial", fill: "#000000", align: "left",
-    wordWrap: true, wordWrapWidth: 400};
+//CUT SCENE VARIABLES
+var cutSceneStyle = { font: "20px Bradley Hand ITC", fill: "#000000", align: "left",
+    wordWrap: true, wordWrapWidth: 400, backgroundColor: "#e0cd94"};
 
 //ALL GAME VARIABLES
 var player;

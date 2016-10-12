@@ -26,7 +26,7 @@ var mainMenu = {
                 ' me they took me back in time with them.\nThey wanted to make sure those documents' +
                 ' never saw the light of day.\nWhile they raided the building where the documents' +
                 ' were held, they left me in the halls posing as a janitor.', bookTextStyle);
-            mainMenu.titleText = mainMenu.add.text(800, 175, '9/11 was done by George Bush!', bookTitleStyle);
+            mainMenu.titleText = mainMenu.add.text(725, 175, '9/11 was done by George Bush!', bookTitleStyle);
             mainMenu.gamePicture = mainMenu.clickMiniGame(950, 400, '9/11pic', '9/11');
         },
         function () {
@@ -36,7 +36,7 @@ var mainMenu = {
                 ' lost trust in me, the suits took me back in time with them to re-film the iconic' +
                 ' event, this time with the benefit of modern computers and special effects.\nI was' +
                 ' given the enormous responsibility of serving coffee.', bookTextStyle);
-            mainMenu.titleText = mainMenu.add.text(800, 175, 'The moon landing was Staged!', bookTitleStyle);
+            mainMenu.titleText = mainMenu.add.text(725, 175, 'The moon landing was Staged!', bookTitleStyle);
             mainMenu.gamePicture = mainMenu.clickMiniGame(950, 400, 'moon_landing', 'moon');
         },
         function () {
@@ -45,7 +45,7 @@ var mainMenu = {
                 ' which she planned to use to drown the world.\nShe wanted to use a powerful, ' +
                 'ancient rain dance to summon the storm.\nSadly for myself and everyone watching,' +
                 ' I was sent out to counter it.', bookTextStyle);
-            mainMenu.titleText = mainMenu.add.text(725, 175, 'Shirley Ann Jackson weather machine Flood!', bookTitleStyle);
+            mainMenu.titleText = mainMenu.add.text(750, 175, 'Shirley Ann Jackson weather machine Flood!', bookTitleStyle);
             mainMenu.gamePicture = mainMenu.clickMiniGame(950, 400, 'rain', 'rain');
         },
     ],
