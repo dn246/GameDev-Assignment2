@@ -9,11 +9,10 @@ var mainMenu = {
     gamePicture: null,
     pages:[
         function () {
-            //stuff for first page? swipe instructions?
             mainMenu.directionsText = mainMenu.add.text(125,275,'I managed to stash this notebook' +
-                ' under my shirt before being returned to my room and beaten. They stopped the ' +
+                ' under my shirt before being returned to my room and beaten.\nThey stopped the ' +
                 'needles and pills after that, and instead began taking me with them through the ' +
-                'portal. We visited several key events, and I was sent to serve as an assistant' +
+                'portal.\nWe visited several key events, and I was sent to serve as an assistant' +
                 ' while the men in suits fulfilled whatever it was they wanted.' +
                 '\nThese are my stories.', bookTextStyle);
             mainMenu.titleText = mainMenu.add.text(725, 325, 'Swipe from right to left to go to' +
@@ -23,33 +22,34 @@ var mainMenu = {
         function () {
             mainMenu.directionsText = mainMenu.add.text(125, 275, 'The September 11th attacks ' +
                 'were a global tragedy. However, when several documents were leaked revealing it' +
-                ' to be a government plot, the people rioted. Because the suits no longer trusted' +
-                ' me they took me back in time with them. They wanted to make sure those documents' +
-                ' never saw the light of day. While they raided the building where the documents' +
-                ' were held,they left me in the halls posing as a janitor.', bookTextStyle);
-            mainMenu.titleText = mainMenu.add.text(800, 175, '9/11 was done by George Bush!', bookTitleStyle);
+                ' to be a government plot, the people rioted.\nBecause the suits no longer trusted' +
+                ' me they took me back in time with them.\nThey wanted to make sure those documents' +
+                ' never saw the light of day.\nWhile they raided the building where the documents' +
+                ' were held, they left me in the halls posing as a janitor.', bookTextStyle);
+            mainMenu.titleText = mainMenu.add.text(725, 175, '9/11 was done by George Bush!', bookTitleStyle);
             mainMenu.gamePicture = mainMenu.clickMiniGame(950, 400, '9/11pic', '9/11');
         },
         function () {
             mainMenu.directionsText = mainMenu.add.text(125, 275, 'The Moon Landing was one of the' +
-                ' most monumental events of the 20th century. When people carefully analyzed the ' +
-                'video and found it to be fake, it was an embarrassment on a national level. Having' +
+                ' most monumental events of the 20th century.\nWhen people carefully analyzed the ' +
+                'video and found it to be fake, it was an embarrassment on a national level.\nHaving' +
                 ' lost trust in me, the suits took me back in time with them to re-film the iconic' +
-                ' event, this time with the benefit of modern computers and special effects. I was' +
+                ' event, this time with the benefit of modern computers and special effects.\nI was' +
                 ' given the enormous responsibility of serving coffee.', bookTextStyle);
-            mainMenu.titleText = mainMenu.add.text(800, 175, 'The moon landing was Staged!', bookTitleStyle);
+            mainMenu.titleText = mainMenu.add.text(725, 175, 'The moon landing was Staged!', bookTitleStyle);
             mainMenu.gamePicture = mainMenu.clickMiniGame(950, 400, 'moon_landing', 'moon');
         },
         function () {
             mainMenu.directionsText = mainMenu.add.text(125, 275, 'Going back again, we ended ' +
-                'up at RPI in Troy, New York. The school president had built a weather machine' +
-                ' which she planned to use to drown the world. She wanted to use a powerful, ' +
-                'ancient rain dance to summon the storm. Sadly for myself and everyone watching,' +
+                'up at RPI in Troy, New York.\nThe school president had built a weather machine' +
+                ' which she planned to use to drown the world.\nShe wanted to use a powerful, ' +
+                'ancient rain dance to summon the storm.\nSadly for myself and everyone watching,' +
                 ' I was sent out to counter it.', bookTextStyle);
-            mainMenu.titleText = mainMenu.add.text(725, 175, 'Shirley Ann Jackson weather machine Flood!', bookTitleStyle);
+            mainMenu.titleText = mainMenu.add.text(750, 175, 'Shirley Ann Jackson weather machine Flood!', bookTitleStyle);
             mainMenu.gamePicture = mainMenu.clickMiniGame(950, 400, 'rain', 'rain');
         },
     ],
+
     preload: function () {
         game.load.spritesheet('turning_page', 'assets/images/notebook_flip.png', 1146, 754);
         game.load.image('return_button', 'assets/images/button_return_notebook.png');
@@ -57,6 +57,7 @@ var mainMenu = {
         game.load.image('9/11pic','assets/images/9_11_tv_slide1.png');
         game.load.image('rain','assets/images/bouncer_breathe_sprite.png');
     },
+
     create: function () {
         mainMenu.notebook = mainMenu.add.sprite(80, 0, 'turning_page');
         mainMenu.notebook.animations.add('right_turn', [0, 1, 2, 3, 0], 4);
@@ -73,9 +74,6 @@ var mainMenu = {
         var select_weather_machine = mainMenu.add.text(750, 425, 'RPI Weather Machine', selectStyle);*/
         mainMenu.input.onDown.add(mainMenu.beginSwipe, this);
         mainMenu.input.onUp.add(mainMenu.endSwipe, this);
-    },
-
-    update: function () {
     },
 
     beginSwipe: function () {
@@ -109,7 +107,11 @@ var mainMenu = {
             currentPage++;
             mainMenu.clearPage();
             mainMenu.notebook.animations.play('right_turn');
-            mainMenu.pages[currentPage]();
+
+            mainMenu.notebook.animations.currentAnim.onComplete.add(function () {
+                mainMenu.clearPage();
+                mainMenu.pages[currentPage]();
+            }, mainMenu);
         }
 
     },
@@ -119,12 +121,16 @@ var mainMenu = {
             currentPage--;
             mainMenu.clearPage();
             mainMenu.notebook.animations.play('left_turn');
-            mainMenu.pages[currentPage]();
+
+            mainMenu.notebook.animations.currentAnim.onComplete.add(function () {
+                mainMenu.clearPage();
+                mainMenu.pages[currentPage]();
+            }, mainMenu);
         }
     },
 
     clickMiniGame: function (x,y, pic, state) {
-        var miniGameBtn = mainMenu.add.sprite(x, y, pic);
+        var miniGameBtn = mainMenu.add.image(x, y, pic);
         miniGameBtn.inputEnabled = true;
         miniGameBtn.events.onInputUp.add(function() {
             game.state.start(state);

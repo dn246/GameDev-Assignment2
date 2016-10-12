@@ -22,13 +22,13 @@ var moonLanding = {
         moonLanding.load.spritesheet('janitor', 'assets/images/janitor_walk_cycle.png', 159,
             204, 4, 0, 206);
         moonLanding.load.image('cup_refill', 'assets/images/coffee_speech_bubble.png');
+        moonLanding.load.image('cup_button', 'assets/images/coffee_button.png');
         moonLanding.load.image('happy', 'assets/images/smiley_face_speech_bubble.png');
         moonLanding.load.image('sad', 'assets/images/sad_face_speech_bubble.png');
     },
 
     create: function() {
         //set several variables from setup to local defaults
-        PLAYER_SPEED = 300;
         PLAYER_START_X = 670;
         PLAYER_START_Y = 320;
         score = 0;
@@ -44,11 +44,11 @@ var moonLanding = {
         player.animations.add('player_walking', [0,1,2,3,4,5,6,7], 60, true);
         player.animations.add('player_idle', [0], 6, true);
         player.anchor.setTo(0.5, 0.5);
-        moonLanding.input.onDown.add(moonLanding.movePlayer, moonLanding);
+        moonLanding.input.onUp.add(moonLanding.movePlayer, moonLanding);
 
         //a coffee mug stuck on the player
         coffeePot = moonLanding.add.sprite (45,-45,'coffeeMug');
-        coffeePot.animations.add('filling', [5,4,3,2,1,0], 2, true);
+        coffeePot.animations.add('filling', [5,4,3,2,1,0], 2, false);
         coffeePot.animations.add('5', [0], 6, true);
         coffeePot.animations.add('4', [1], 6, true);
         coffeePot.animations.add('3', [2], 6, true);
@@ -56,22 +56,23 @@ var moonLanding = {
         coffeePot.animations.add('1', [4], 6, true);
         coffeePot.animations.add('0', [5], 6, true);
         player.addChild(coffeePot);
+        coffeePot.animations.play(moonLanding.potCups.toString());
 
 
         customerGroup = moonLanding.add.group();
         //cameraman wants coffee...why doesn't he get it himself, he's on break...
-        var cameraMan = moonLanding.createCustomer('cameraMan');
+        moonLanding.createCustomer('cameraMan');
 
         //director wants coffee, better be quick
-        var director = moonLanding.createCustomer('director');
+        moonLanding.createCustomer('director');
 
         //janitor wants coffee, cool dude
-        var janitor = moonLanding.createCustomer('janitor');
+        moonLanding.createCustomer('janitor');
 
         // Set up text box for timer and score variable in UI
         var timeStyle = { font: "24px Arial", fill: "#000000", align: "left"};
-        timeText = moonLanding.add.text(moonLanding.camera.x+25, moonLanding.camera.height-50,
-            'Time Rem:' + time_left.toString(), timeStyle);
+        timeText = moonLanding.add.text(moonLanding.camera.x+moonLanding.camera.width-170,
+            moonLanding.camera.height-100, 'Time Rem:' + time_left.toString(), timeStyle);
         var scoreStyle = { font: "24px Arial", fill: "#000000", align: "right"};
         scoreText = moonLanding.add.text(moonLanding.camera.x+moonLanding.camera.width-140, moonLanding.camera.height-50, 'Score: 0', scoreStyle);
 
@@ -87,11 +88,9 @@ var moonLanding = {
         // add the elements to the allGroup for depth sorting
         allGroup = moonLanding.add.group();
         allGroup.add(player);
-        allGroup.add(cameraMan);
-        allGroup.add(director);
-        allGroup.add(janitor);
         allGroup.add(timeText);
         allGroup.add(scoreText);
+        allGroup.add(customerGroup);
     },
 
     update: function() {
@@ -100,13 +99,20 @@ var moonLanding = {
             moonLanding.refillPot();
         }
         customerGroup.forEach(function(customer) {
-            console.log(typeof customer);
-            game.physics.arcade.overlap(player, customer, function(){console.log("suck it");},null, moonLanding);
+            if (customer.leaving === false) {
+                if (!game.physics.arcade.overlap(player, customer, function () {
+                        customer.speech.loadTexture("cup_button", 0, false);
+                        customer.inputEnabled = true;
+                        customer.events.onInputDown.add(moonLanding.refillCup, customer);
+
+                    }, null, customer)) {
+                    //SUPER HELLA INEFFICIENT...
+                    customer.speech.loadTexture("cup_refill", 0, false);
+                    customer.inputEnabled = false;
+                }
+            }
         });
 
-
-
-        moonLanding.updateUI();
         allGroup.sort('y', Phaser.Group.SORT_ASCENDING);
     },
 
@@ -156,40 +162,62 @@ var moonLanding = {
 
     refillPot: function(){
         if (!interacting) {
-            interacting = true;
-            if (moonLanding.potCups === 0) {
+            if (moonLanding.potCups <= 0) {
+                interacting = true;
                 coffeePot.animations.play('filling');
-                moonLanding.potCups = 5;
-                coffeePot.animations.play(moonLanding.potCups.toString());
+                coffeePot.animations.currentAnim.onComplete.add(function () {
+                    interacting = false;
+                    moonLanding.potCups = 5;
+                    coffeePot.animations.play(moonLanding.potCups.toString());
+                }, moonLanding);
             } else {
                 console.log("not at 0 cups fuck off");
             }
         }
     },
 
-    refillCup: function () {
+    refillCup: function (customer) {
         if (!interacting) {
+            interacting = true;
             if (moonLanding.potCups > 0) {
                 moonLanding.potCups -= 1;
                 coffeePot.animations.play(moonLanding.potCups.toString());
                 score += 10;
-                customerGroup.remove(customer);
-                //customer.kill();
+                scoreText.text = 'Score: ' + score;
+                moonLanding.customerLeave(customer,'happy');
 
             } else {
                 console.log("you have no coffee! GO GET SOME!!!");
             }
+            interacting = false;
         }
+    },
+    
+    customerLeave: function (customer, emotion) {
+        customer.leaving = true;
+        customer.speech.loadTexture(emotion, 0, false);
+        var x = 1444;
+        if (customer.scale.x === 1){
+            x = -100;
+        }
+        customer.scale.x *= -1;
+        customer.animations.play(customer.filename+'_walking');
+        var duration = (moonLanding.physics.arcade.distanceToXY(customer, x, customer.y) / PLAYER_SPEED) * 2000;
+        moonLanding.add.tween(customer).to({ x:x, y:customer.y }, duration, Phaser.Easing.Linear.None, true);
+        moonLanding.time.events.add(duration, function() {
+            customerGroup.remove(customer);
+            customer.kill();
+        }, game);
     },
 
     createCustomer: function(filename){
-        var x = Math.floor(Math.random()*200)+100, t_scale = 1, y = 130, side = -100;
+        var x = Math.floor(Math.random()*200)+100, t_scale = 1, y = 175, side = -100;
         if (Math.random() < 0.5){
             x += 900;
             side = 1444;
             t_scale = -1;
         }
-        y += Math.floor(Math.random()*520);
+        y += Math.floor(Math.random()*460);
 
         var customer = moonLanding.add.sprite(side, y, filename);
         customer.animations.add(filename+'_walking',[0,1,2,3], 6, true);
@@ -199,10 +227,17 @@ var moonLanding = {
 
         //add the bubble demanding coffee and set it up to be a child of the customer
         var speech_bubble = moonLanding.add.sprite(0, -175, "cup_refill");
-        customer.addChild(speech_bubble);
+        customer.speech = customer.addChild(speech_bubble);
+
+        //used for showing happy or sad face when leaving and animation
+        customer.leaving = false;
+        customer.filename = filename;
+
+        //sets the customer to be facing the right way now
         customer.scale.x = t_scale;
 
-        var duration = (moonLanding.physics.arcade.distanceToXY(customer, x, y) / PLAYER_SPEED) * 1000;
+        //walks the character from off the screen back on
+        var duration = (moonLanding.physics.arcade.distanceToXY(customer, x, y) / PLAYER_SPEED) * 2000;
         moonLanding.add.tween(customer).to({ x:x, y:y }, duration, Phaser.Easing.Linear.None, true);
         moonLanding.time.events.add(duration, function() {
             customer.animations.stop(filename+'_walking');
@@ -212,14 +247,6 @@ var moonLanding = {
 
         customerGroup.add(customer);
         return customer;
-    },
-
-    updateUI: function() {
-        // Update the text position as the camera moves
-        timeText.x = moonLanding.camera.x+moonLanding.camera.width-170;
-        timeText.y = moonLanding.camera.height-100;
-        scoreText.x = moonLanding.camera.x+moonLanding.camera.width-170;
-        scoreText.y = moonLanding.camera.height-50;
     },
 
     secondTick: function() {
