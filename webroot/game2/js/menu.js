@@ -26,7 +26,7 @@ var mainMenu = {
                 ' me they took me back in time with them.\nThey wanted to make sure those documents' +
                 ' never saw the light of day.\nWhile they raided the building where the documents' +
                 ' were held, they left me in the halls posing as a janitor.', bookTextStyle);
-            mainMenu.titleText = mainMenu.add.text(725, 175, '9/11 was done by George Bush!', bookTitleStyle);
+            mainMenu.titleText = mainMenu.add.text(775, 175, 'George Bush did 9/11!', bookTitleStyle);
             mainMenu.gamePicture = mainMenu.clickMiniGame(950, 400, '9/11pic', '9/11');
         },
         function () {
@@ -36,7 +36,7 @@ var mainMenu = {
                 ' lost trust in me, the suits took me back in time with them to re-film the iconic' +
                 ' event, this time with the benefit of modern computers and special effects.\nI was' +
                 ' given the enormous responsibility of serving coffee.', bookTextStyle);
-            mainMenu.titleText = mainMenu.add.text(725, 175, 'The moon landing was Staged!', bookTitleStyle);
+            mainMenu.titleText = mainMenu.add.text(775, 175, 'Staged Moon Landing!', bookTitleStyle);
             mainMenu.gamePicture = mainMenu.clickMiniGame(950, 400, 'moon_landing', 'moon');
         },
         function () {
@@ -45,23 +45,28 @@ var mainMenu = {
                 ' which she planned to use to drown the world.\nShe wanted to use a powerful, ' +
                 'ancient rain dance to summon the storm.\nSadly for myself and everyone watching,' +
                 ' I was sent out to counter it.', bookTextStyle);
-            mainMenu.titleText = mainMenu.add.text(750, 175, 'Shirley Ann Jackson weather machine Flood!', bookTitleStyle);
+            mainMenu.titleText = mainMenu.add.text(850, 175, "Shirley's Ark!", bookTitleStyle);
             mainMenu.gamePicture = mainMenu.clickMiniGame(950, 400, 'rain', 'rain');
         },
     ],
 
     preload: function () {
-        game.load.spritesheet('turning_page', 'assets/images/notebook_flip.png', 1146, 754);
-        game.load.image('return_button', 'assets/images/button_return_notebook.png');
-        game.load.image('moon_landing','assets/images/menu_moon_landing_b.png');
-        game.load.image('9/11pic','assets/images/9_11_tv_slide1.png');
-        game.load.image('rain','assets/images/bouncer_breathe_sprite.png');
+        //IMAGES
+        mainMenu.load.image('return_button', 'assets/images/button_return_notebook.png');
+        mainMenu.load.image('moon_landing','assets/images/menu_moon_landing_b.png');
+        mainMenu.load.image('9/11pic','assets/images/9_11_menu_screen_v2.png');
+        mainMenu.load.image('rain','assets/images/weather_machine_menu_select_v2.png');
+        //SPRITES
+        mainMenu.load.spritesheet('turning_page', 'assets/images/notebook_flip.png', 1146, 754);
+        //AUDIO
+        mainMenu.load.audio('pageTurn','assets/sounds/page_turn.wav');
     },
 
     create: function () {
         mainMenu.notebook = mainMenu.add.sprite(80, 0, 'turning_page');
         mainMenu.notebook.animations.add('right_turn', [0, 1, 2, 3, 0], 4);
         mainMenu.notebook.animations.add('left_turn', [0, 3, 2, 1, 0], 4);
+        fx_page_turn = mainMenu.add.audio('pageTurn');
 
         //notebook.animations.play('left_turn');
         mainMenu.pages[currentPage]();
@@ -106,6 +111,7 @@ var mainMenu = {
         if (currentPage < 3){
             currentPage++;
             mainMenu.clearPage();
+            fx_page_turn.play();
             mainMenu.notebook.animations.play('right_turn');
 
             mainMenu.notebook.animations.currentAnim.onComplete.add(function () {
@@ -120,6 +126,7 @@ var mainMenu = {
         if (currentPage > 0){
             currentPage--;
             mainMenu.clearPage();
+            fx_page_turn.play();
             mainMenu.notebook.animations.play('left_turn');
 
             mainMenu.notebook.animations.currentAnim.onComplete.add(function () {

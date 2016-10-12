@@ -7,10 +7,22 @@ var moonLanding = {
     PLAYER_MIN_X: 65,
     PLAYER_MIN_Y: 130,
     potCups: 5,
+    defCamera: 200,
+    cameraTimer: 0,
+    defJanitor: 400,
+    janitorTimer: 400,
+    defDirector: 1300,
+    directorTimer: 1300,
 
     preload: function() {
+        //IMAGES
         moonLanding.load.image('moon_set', 'assets/images/moon_landing_set.png');
         moonLanding.load.image('return_button', 'assets/images/button_return_notebook.png');
+        moonLanding.load.image('cup_refill', 'assets/images/coffee_speech_bubble.png');
+        moonLanding.load.image('cup_button', 'assets/images/coffee_button.png');
+        moonLanding.load.image('happy', 'assets/images/smiley_face_speech_bubble.png');
+        moonLanding.load.image('sad', 'assets/images/sad_face_speech_bubble.png');
+        //SPRITES
         moonLanding.load.spritesheet('player_walk', 'assets/images/mcwalkcycle.png', 118,
             211, 8);
         moonLanding.load.spritesheet('coffeeMug', 'assets/images/coffee_pot_sprite_sheet.png', 36,
@@ -21,22 +33,44 @@ var moonLanding = {
             226, 4, 0, 242);
         moonLanding.load.spritesheet('janitor', 'assets/images/janitor_walk_cycle.png', 159,
             204, 4, 0, 206);
-        moonLanding.load.image('cup_refill', 'assets/images/coffee_speech_bubble.png');
-        moonLanding.load.image('cup_button', 'assets/images/coffee_button.png');
-        moonLanding.load.image('happy', 'assets/images/smiley_face_speech_bubble.png');
-        moonLanding.load.image('sad', 'assets/images/sad_face_speech_bubble.png');
+        //AUDIO
+        moonLanding.load.audio('pour','assets/sounds/coffee_pour.wav');
+        moonLanding.load.audio('quote','assets/sounds/moon_quote.wav');
+        moonLanding.load.audio('ding','assets/sounds/ding.wav');
     },
 
-    create: function() {
-        //set several variables from setup to local defaults
+    init: function () {
+        // Global variable redefinition
         PLAYER_START_X = 670;
         PLAYER_START_Y = 320;
         score = 0;
         interacting = false;
         time_left = 30;
+        game_over = false;
+
+
+        // Set up all the game sounds
+        fx_cofee_pour = moonLanding.add.audio('pour');
+        fx_moon_guote = moonLanding.add.audio('quote');
+        fx_ding = moonLanding.add.audio('ding');
+
+        cursors = moonLanding.input.pointer1;
+
+        // Set up text box for timer and score variable in UI
+        var timeStyle = { font: "24px Arial", fill: "#000000", align: "left"};
+        timeText = moonLanding.add.text(moonLanding.camera.x+moonLanding.camera.width-170,
+            moonLanding.camera.height-100, 'Time Rem:' + time_left.toString(), timeStyle);
+        var scoreStyle = { font: "24px Arial", fill: "#000000", align: "right"};
+        scoreText = moonLanding.add.text(moonLanding.camera.x+moonLanding.camera.width-140,
+            moonLanding.camera.height-50, 'Score: 0', scoreStyle);
+
+    },
+
+    create: function() {
+        //set several variables from setup to local defaults
+        moonLanding.init();
 
         moonLanding.world.setBounds(0, 0, 1334, 750);
-        // Add the group of moon_set to the game
         backgrounds = moonLanding.add.sprite(0,0,'moon_set');
 
         // Set up player sprite and animation
@@ -60,26 +94,10 @@ var moonLanding = {
 
 
         customerGroup = moonLanding.add.group();
-        //cameraman wants coffee...why doesn't he get it himself, he's on break...
-        moonLanding.createCustomer('cameraMan');
-
-        //director wants coffee, better be quick
-        moonLanding.createCustomer('director');
-
-        //janitor wants coffee, cool dude
-        moonLanding.createCustomer('janitor');
-
-        // Set up text box for timer and score variable in UI
-        var timeStyle = { font: "24px Arial", fill: "#000000", align: "left"};
-        timeText = moonLanding.add.text(moonLanding.camera.x+moonLanding.camera.width-170,
-            moonLanding.camera.height-100, 'Time Rem:' + time_left.toString(), timeStyle);
-        var scoreStyle = { font: "24px Arial", fill: "#000000", align: "right"};
-        scoreText = moonLanding.add.text(moonLanding.camera.x+moonLanding.camera.width-140, moonLanding.camera.height-50, 'Score: 0', scoreStyle);
 
         // Set up game physics, keyboard input, camera fade listener
         game.physics.arcade.enable(player);
         game.physics.arcade.enable(customerGroup);
-        //cursors = moonLanding.input.pointer1;
         moonLanding.camera.onFadeComplete.add(moonLanding.resetFade, moonLanding);
 
         // Start the timer for the level
@@ -94,24 +112,42 @@ var moonLanding = {
     },
 
     update: function() {
-
-        if (player.x > 570 && player.x < 760 && player.y < 220){
-            moonLanding.refillPot();
-        }
-        customerGroup.forEach(function(customer) {
-            if (customer.leaving === false) {
-                if (!game.physics.arcade.overlap(player, customer, function () {
-                        customer.speech.loadTexture("cup_button", 0, false);
-                        customer.inputEnabled = true;
-                        customer.events.onInputDown.add(moonLanding.refillCup, customer);
-
-                    }, null, customer)) {
-                    //SUPER HELLA INEFFICIENT...
-                    customer.speech.loadTexture("cup_refill", 0, false);
-                    customer.inputEnabled = false;
-                }
+        if (!game_over) {
+            moonLanding.cameraTimer--;
+            moonLanding.janitorTimer--;
+            moonLanding.directorTimer--;
+            if (moonLanding.cameraTimer <= 0) {
+                moonLanding.createCustomer('cameraMan');
+                moonLanding.cameraTimer = moonLanding.defCamera;
             }
-        });
+            if (moonLanding.janitorTimer <= 0) {
+                moonLanding.createCustomer('janitor');
+                moonLanding.janitorTimer = moonLanding.defJanitor;
+            }
+            if (moonLanding.directorTimer <= 0) {
+                moonLanding.createCustomer('director');
+                moonLanding.directorTimer = moonLanding.defDirector;
+            }
+
+
+            if (player.x > 570 && player.x < 760 && player.y < 220) {
+                moonLanding.refillPot();
+            }
+            customerGroup.forEach(function (customer) {
+                if (customer.leaving === false) {
+                    if (!game.physics.arcade.overlap(player, customer, function () {
+                            customer.speech.loadTexture("cup_button", 0, false);
+                            customer.inputEnabled = true;
+                            customer.events.onInputDown.add(moonLanding.refillCup, customer);
+
+                        }, null, customer)) {
+                        //SUPER HELLA INEFFICIENT...
+                        customer.speech.loadTexture("cup_refill", 0, false);
+                        customer.inputEnabled = false;
+                    }
+                }
+            });
+        }
 
         allGroup.sort('y', Phaser.Group.SORT_ASCENDING);
     },
@@ -133,7 +169,7 @@ var moonLanding = {
             player.animations.play('player_walking', true);
 
             // Determine the time it will take to get to the pointer
-            var duration = (moonLanding.physics.arcade.distanceToPointer(player, pointer) / PLAYER_SPEED) * 1000;
+            duration = (moonLanding.physics.arcade.distanceToPointer(player, pointer) / PLAYER_SPEED) * 1000;
             // Start tween movement towards pointer
             var tempX = moonLanding.input.worldX;
             var tempY = moonLanding.input.worldY;
@@ -149,7 +185,8 @@ var moonLanding = {
             else if (tempY > moonLanding.PLAYER_MAX_Y) {
                 tempY = moonLanding.PLAYER_MAX_Y;
             }
-            tween = moonLanding.add.tween(player).to({x: tempX, y: tempY}, duration, Phaser.Easing.Linear.None, true);
+            tween = moonLanding.add.tween(player).to({x: tempX, y: tempY}, duration,
+                Phaser.Easing.Linear.None, true);
 
             // Set a timer to stop the animation
             moonLanding.time.events.add(duration, function () {
@@ -164,6 +201,13 @@ var moonLanding = {
         if (!interacting) {
             if (moonLanding.potCups <= 0) {
                 interacting = true;
+                fx_cofee_pour.play();
+                duration = 100;
+
+                tween = moonLanding.add.tween(player).to({x: 735, y: 170}, duration,
+                    Phaser.Easing.Linear.None, true);
+
+                player.scale.x = -1;
                 coffeePot.animations.play('filling');
                 coffeePot.animations.currentAnim.onComplete.add(function () {
                     interacting = false;
@@ -181,6 +225,7 @@ var moonLanding = {
             interacting = true;
             if (moonLanding.potCups > 0) {
                 moonLanding.potCups -= 1;
+                fx_cofee_pour.play();
                 coffeePot.animations.play(moonLanding.potCups.toString());
                 score += 10;
                 scoreText.text = 'Score: ' + score;
@@ -262,6 +307,9 @@ var moonLanding = {
 
     GameOver: function() {
         // TODO: show highscore table and enter highscore
+        game_over = true;
+        fx_moon_guote.play();
+
         createReturn();
     },
 

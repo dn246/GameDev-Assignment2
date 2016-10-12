@@ -50,17 +50,22 @@ var cutScenes = {
         }
     ],
     preload: function () {
-        game.load.spritesheet('background','assets/images/intro_background.png',1334,750);
-        game.load.image('1','assets/images/intro_scene01.png');
-        game.load.image('2','assets/images/intro_scene02.png');
-        game.load.image('3','assets/images/intro_scene03.png');
-        game.load.image('4','assets/images/intro_scene04.png');
-        game.load.image('5','assets/images/intro_scene05.png');
-        game.load.image('6','assets/images/intro_scene06.png');
+        //IMAGES
+        cutScenes.load.image('1','assets/images/intro_scene01.png');
+        cutScenes.load.image('2','assets/images/intro_scene02.png');
+        cutScenes.load.image('3','assets/images/intro_scene03.png');
+        cutScenes.load.image('4','assets/images/intro_scene04.png');
+        cutScenes.load.image('5','assets/images/intro_scene05.png');
+        cutScenes.load.image('6','assets/images/intro_scene06.png');
+        //SPRITES
+        cutScenes.load.spritesheet('background','assets/images/intro_background.png',1334,750);
+        //AUDIO
+        cutScenes.load.audio('pageTurn','assets/sounds/page_turn.wav');
     },
 
     create: function () {
         backgrounds = cutScenes.add.sprite(0, 0, 'background');
+        fx_page_turn = cutScenes.add.audio('pageTurn');
         cutScenes.introSlides[cutScenes.currentFrame]();
 
 
@@ -81,6 +86,7 @@ var cutScenes = {
         if (cutScenes.currentFrame<5){
             cutScenes.currentFrame++;
             cutScenes.clearSlide();
+            fx_page_turn.play();
             cutScenes.introSlides[cutScenes.currentFrame]();
         }else{
             game.state.start('menu');
