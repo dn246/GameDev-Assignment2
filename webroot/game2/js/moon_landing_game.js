@@ -55,7 +55,7 @@ var moonLanding = {
         fx_cofee_pour = moonLanding.add.audio('pour');
         fx_moon_guote = moonLanding.add.audio('quote');
         fx_clock_buzzer = moonLanding.add.audio('buzzer');
-        fx_ding = moonLanding.add.audio('buzzer');
+        fx_ding = moonLanding.add.audio('ding');
         fx_short_pour = moonLanding.add.audio('shortPour');
 
         cursors = moonLanding.input.pointer1;

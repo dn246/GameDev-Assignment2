@@ -2,13 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="26b0ed8b-d63e-48a8-a681-5a10d96f0177" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/webroot/game2/assets/sounds/main_menu_screen_audio-11.wav" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/webroot/game2/js/9_11_game.js" afterPath="$PROJECT_DIR$/webroot/game2/js/9_11_game.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/webroot/game2/js/cutScenes.js" afterPath="$PROJECT_DIR$/webroot/game2/js/cutScenes.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/webroot/game2/js/moon_landing_game.js" afterPath="$PROJECT_DIR$/webroot/game2/js/moon_landing_game.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/webroot/game2/js/rain_dance.js" afterPath="$PROJECT_DIR$/webroot/game2/js/rain_dance.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/webroot/game2/js/setup.js" afterPath="$PROJECT_DIR$/webroot/game2/js/setup.js" />
     </list>
     <ignored path="game2.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -41,24 +36,24 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="rain_dance.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="rain_dance.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/webroot/game2/js/rain_dance.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="484">
-              <caret line="22" column="23" selection-start-line="22" selection-start-column="23" selection-end-line="22" selection-end-column="23" />
+            <state relative-caret-position="462">
+              <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="moon_landing_game.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="moon_landing_game.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/webroot/game2/js/moon_landing_game.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="230" column="27" selection-start-line="230" selection-start-column="27" selection-end-line="230" selection-end-column="27" />
+            <state relative-caret-position="154">
+              <caret line="57" column="45" selection-start-line="57" selection-start-column="45" selection-end-line="57" selection-end-column="45" />
               <folding>
-                <element signature="e#10676#12247#0" expanded="false" />
-                <element signature="e#12277#12550#0" expanded="false" />
+                <element signature="e#10674#12245#0" expanded="false" />
+                <element signature="e#12275#12548#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -143,11 +138,11 @@
         <option value="$PROJECT_DIR$/webroot/game2/js/cutscenes.js" />
         <option value="$PROJECT_DIR$/webroot/game2/menu.html" />
         <option value="$PROJECT_DIR$/webroot/game2/js/9_11_game.js" />
-        <option value="$PROJECT_DIR$/webroot/game2/js/moon_landing_game.js" />
         <option value="$PROJECT_DIR$/webroot/game2/js/setup.js" />
         <option value="$PROJECT_DIR$/webroot/game2/js/menu.js" />
         <option value="$PROJECT_DIR$/webroot/game2/js/cutScenes.js" />
         <option value="$PROJECT_DIR$/webroot/game2/js/rain_dance.js" />
+        <option value="$PROJECT_DIR$/webroot/game2/js/moon_landing_game.js" />
       </list>
     </option>
   </component>
@@ -403,12 +398,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1475511627393</updated>
-      <workItem from="1475511634204" duration="155766000" />
+      <workItem from="1475511634204" duration="156134000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="155766000" />
+    <option name="totallyTimeSpent" value="156134000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
@@ -608,17 +603,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/webroot/game2/js/moon_landing_game.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="230" column="27" selection-start-line="230" selection-start-column="27" selection-end-line="230" selection-end-column="27" />
-          <folding>
-            <element signature="e#10676#12247#0" expanded="false" />
-            <element signature="e#12277#12550#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/webroot/game2/js/setup.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="528">
@@ -655,9 +639,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/webroot/game2/js/rain_dance.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="484">
-          <caret line="22" column="23" selection-start-line="22" selection-start-column="23" selection-end-line="22" selection-end-column="23" />
+        <state relative-caret-position="462">
+          <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webroot/game2/js/moon_landing_game.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="154">
+          <caret line="57" column="45" selection-start-line="57" selection-start-column="45" selection-end-line="57" selection-end-column="45" />
+          <folding>
+            <element signature="e#10674#12245#0" expanded="false" />
+            <element signature="e#12275#12548#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
