@@ -18,10 +18,11 @@ var rain_dance = {
         rain_dance.load.audio('incorrect', 'assets/sounds/incorrect.wav');
         rain_dance.load.audio('thunder_storm', 'assets/sounds/thunder_storm.wav');
         rain_dance.load.audio('click', 'assets/sounds/click.wav');
-        rain_dance.load.audio('hipHop', 'assets/music/hip_hop_loop.wav');
+        rain_dance.load.audio('hipHop', 'assets/sounds/hip_hop_loop.wav');
     },
 
     init: function () {
+        fx_main_music.stop();
         score = 50;
         interacting = false;
         game_over = false;
@@ -36,7 +37,7 @@ var rain_dance = {
         fx_thunder_storm = rain_dance.add.audio('thunder_storm');
         fx_click = rain_dance.add.audio('click');
         fx_ding = rain_dance.add.audio('ding');
-        fx_hipHop = rain_dance.add.audio('hipHop', true);
+        fx_hipHop = rain_dance.add.audio('hipHop', 1,true);
     },
 
     create: function() {
@@ -296,7 +297,8 @@ var rain_dance = {
             rain_dance.flashText('Shirley Prevailed! You Lose!');
             fx_boo.play();
         }
-        //fx_hipHop.stop();
+        fx_hipHop.stop();
+        fx_main_music.play();
         createReturn();
     },
 

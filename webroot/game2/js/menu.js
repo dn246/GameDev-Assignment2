@@ -141,7 +141,6 @@ var mainMenu = {
         miniGameBtn.inputEnabled = true;
         miniGameBtn.events.onInputUp.add(function() {
             game.state.start(state);
-            fx_main_music.stop();
         });
         miniGameBtn.anchor.setTo(0.5, 0.5);
         return miniGameBtn;
