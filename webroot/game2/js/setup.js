@@ -4,7 +4,11 @@ var game = new Phaser.Game(1334, 750, Phaser.AUTO, '',
     { preload: preload, create: create, update: update, render: render });
 
 //MAIN MENU VARIABLES
-var bookTitleStyle = { font: "24px Arial", fill: "#000000", align: "center"};
+var bookTitleStyle = { font: "24px Bradley Hand ITC", fill: "#000000", align: "center",
+    wordWrap: true, wordWrapWidth: 475};
+var bookTextStyle = { font: "20px Bradley Hand ITC", fill: "#000000", align: "left",
+    wordWrap: true, wordWrapWidth: 475};
+var currentPage = 0;
 
 //ALL GAME VARIABLES
 var player;
@@ -18,10 +22,11 @@ var fading = false;
 var backgrounds;
 var score = 0;
 var duration = 0;
-var time_left = 10;
+var time_left = 30;
 var PLAYER_SPEED = 300;
 var PLAYER_START_X = 100;
 var PLAYER_START_Y = 410;
+var MINIMUM_SWIPE = 200;
 
 //MOON LANDING GAME VARIABLES
 var coffeePot;
@@ -37,7 +42,6 @@ var CLEAN_TIME = 400;
 var tables;
 var trash;
 var foregrounds;
-var timer;
 var tv;
 var remote;
 var seamless_total = 1;
@@ -83,7 +87,7 @@ var fx_tv_click;
 game.state.add('menu',mainMenu);
 game.state.add('moon',moonLanding);
 game.state.add('9/11',nineEleven);
-game.state.add('rain',rpi_game);
+game.state.add('rain',rain_dance);
 
 game.state.start('menu');
 

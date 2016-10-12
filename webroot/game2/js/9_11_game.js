@@ -4,73 +4,73 @@
 var nineEleven = {
 
     preload: function() {
-        this.load.image('9_11_background', 'assets/images/9_11_background_dark.png');
-        this.load.image('9_11_table', 'assets/images/9_11_seamless_table.png');
-        this.load.image('9_11_foreground', 'assets/images/9_11_seamless_foreground.png');
-        this.load.image('return_button', 'assets/images/button_return_notebook.png');
-        this.load.spritesheet('player_crawling', 'assets/images/9_11_player_sprite_2.png', 147, 120);
-        this.load.spritesheet('trash', 'assets/images/9_11_trash_sprites.png', 92, 60);
-        this.load.spritesheet('bubbles', 'assets/images/9_11_bubbles_small.png', 43, 30);
-        this.load.spritesheet('tv', 'assets/images/9_11_tv.png', 508, 276);
+        nineEleven.load.image('9_11_background', 'assets/images/9_11_background_dark.png');
+        nineEleven.load.image('9_11_table', 'assets/images/9_11_seamless_table.png');
+        nineEleven.load.image('9_11_foreground', 'assets/images/9_11_seamless_foreground.png');
+        nineEleven.load.image('return_button', 'assets/images/button_return_notebook.png');
+        nineEleven.load.spritesheet('player_crawling', 'assets/images/9_11_player_sprite_2.png', 147, 120);
+        nineEleven.load.spritesheet('trash', 'assets/images/9_11_trash_sprites.png', 92, 60);
+        nineEleven.load.spritesheet('bubbles', 'assets/images/9_11_bubbles_small.png', 43, 30);
+        nineEleven.load.spritesheet('tv', 'assets/images/9_11_tv.png', 508, 276);
 
-        this.load.audio('cleaning', 'assets/sounds/cleaning.wav');
-        this.load.audio('clock_buzzer', 'assets/sounds/clock_buzzer.wav');
-        this.load.audio('tv_click', 'assets/sounds/tv_click.wav');
+        nineEleven.load.audio('cleaning', 'assets/sounds/cleaning.wav');
+        nineEleven.load.audio('clock_buzzer', 'assets/sounds/clock_buzzer.wav');
+        nineEleven.load.audio('tv_click', 'assets/sounds/tv_click.wav');
     },
 
     create: function() {
-        this.world.setBounds(0, 0, 1334*(seamless_total+1), 750);
+        nineEleven.world.setBounds(0, 0, 1334*(seamless_total+1), 750);
 
         // Add the group of backgrounds to the game
-        backgrounds = this.add.group();
+        backgrounds = nineEleven.add.group();
         backgrounds.create(0,0,'9_11_background');
         backgrounds.create(1334,0,'9_11_background');
 
         // Add the group of tables to the game
-        tables = this.add.group();
+        tables = nineEleven.add.group();
         tables.create(0,0,'9_11_table');
         tables.create(1334,0,'9_11_table');
 
         // Set up m_player sprite and animation
-        player = this.add.sprite (PLAYER_START_X,PLAYER_START_Y,'player_crawling');
+        player = nineEleven.add.sprite (PLAYER_START_X,PLAYER_START_Y,'player_crawling');
         player.animations.add('player_crawling', [0,1,2], 5, true);
         player.animations.add('player_cleaning', [3,4,5], 10, true);
         player.anchor.setTo(0.5, 0.5);
-        game.input.onDown.add(this.movePlayer, this);
+        game.input.onDown.add(nineEleven.movePlayer, nineEleven);
 
         // Add the group of trash bits to the game
-        trash = this.add.group();
-        this.generateTrash();
+        trash = nineEleven.add.group();
+        nineEleven.generateTrash();
 
         // Add the group of backgrounds to the game
-        foregrounds = this.add.group();
+        foregrounds = nineEleven.add.group();
         foregrounds.create(0,0,'9_11_foreground');
         foregrounds.create(1334,0,'9_11_foreground');
 
-        tv = this.add.sprite(430,-273,'tv');
+        tv = nineEleven.add.sprite(430,-273,'tv');
         tv.animations.add('video', [0,1,2,3,4,5,6,7,8], 5, true);
 
         // Set up text box for timer and score variable in UI
         var timeStyle = { font: "24px Lucida Console", fill: "#ffffff", align: "left"};
-        timeText = this.add.text(this.camera.x+25, this.camera.y+25, 'Time Left Until Exposure: 30', timeStyle);
+        timeText = nineEleven.add.text(nineEleven.camera.x+25, nineEleven.camera.y+25, 'Time Left Until Exposure: 30', timeStyle);
         var scoreStyle = { font: "24px Lucida Console", fill: "#ffffff", align: "right"};
-        scoreText = this.add.text(this.camera.x+this.camera.width-400, this.camera.y+25, 'Government filth cleaned up: 0', scoreStyle);
+        scoreText = nineEleven.add.text(nineEleven.camera.x+nineEleven.camera.width-400, nineEleven.camera.y+25, 'Government filth cleaned up: 0', scoreStyle);
 
         // Set up game physics, keyboard input, camera fade listener
         game.physics.arcade.enable(player);
         cursors = game.input.pointer1;
-        this.camera.onFadeComplete.add(resetFade, this);
+        nineEleven.camera.onFadeComplete.add(nineEleven.resetFade, nineEleven);
 
         // Start the timer for the level
-        this.time.events.add(Phaser.Timer.SECOND, this.secondTick, this);
+        nineEleven.time.events.add(Phaser.Timer.SECOND, nineEleven.secondTick, nineEleven);
 
         // Set up all the game sounds
-        fx_cleaning = this.add.audio('cleaning');
-        fx_clock_buzzer = this.add.audio('clock_buzzer');
-        fx_tv_click = this.add.audio('tv_click');
+        fx_cleaning = nineEleven.add.audio('cleaning');
+        fx_clock_buzzer = nineEleven.add.audio('clock_buzzer');
+        fx_tv_click = nineEleven.add.audio('tv_click');
 
         // Add all objects to the m_allGroup
-        allGroup = this.add.group();
+        allGroup = nineEleven.add.group();
         allGroup.add(backgrounds);
         allGroup.add(tables);
         allGroup.add(player);
@@ -82,12 +82,12 @@ var nineEleven = {
 
     update: function() {
         // Set the interpolating camera to follow the m_player
-        this.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.05, 0.05);
+        nineEleven.camera.follow(player, Phaser.Camera.FOLLOW_LOCKON, 0.05, 0.05);
         // Add collision to trash objects so they can be picked up
         game.physics.arcade.enable(trash);
 
-        this.updateUI();
-        this.checkEndlessGeneration();
+        nineEleven.updateUI();
+        nineEleven.checkEndlessGeneration();
 
         trash.forEach(function(t) {
                 if (t.scale.x <= 0) {
@@ -124,23 +124,23 @@ var nineEleven = {
             // Determine the time it will take to get to the pointer
             duration = (game.physics.arcade.distanceToPointer(player, pointer) / PLAYER_SPEED) * 1000;
             // Start m_tween movement towards pointer
-            tween = this.add.tween(player).to({ x: moveX, y: game.input.worldY - 50}, duration, "Sine.easeInOut", true);
+            tween = nineEleven.add.tween(player).to({ x: moveX, y: game.input.worldY - 50}, duration, "Sine.easeInOut", true);
 
             // Set timers to start/stop the cleaning animation once at trash location
             if (clean_click) {
-                this.time.events.add(duration, function() {
+                nineEleven.time.events.add(duration, function() {
                         player.animations.play('player_cleaning', false);
                         cleaning = true;
-                    }, this);
-                this.time.events.add(duration+CLEAN_TIME, function() {
+                    }, nineEleven);
+                nineEleven.time.events.add(duration+CLEAN_TIME, function() {
                         player.animations.stop('player_cleaning');
                         cleaning = false;
-                    }, this);
+                    }, nineEleven);
             } else {
-                this.time.events.add(duration, function() {
+                nineEleven.time.events.add(duration, function() {
                         player.animations.stop('player_crawling');
                         cleaning = false;
-                    }, this);
+                    }, nineEleven);
             }
         }
     },
@@ -149,14 +149,14 @@ var nineEleven = {
         if (!cleaning) {
             var i = 0;
             while (i < 3) {
-                this.createBubbles(t.body.x+20+i*25,t.body.y+15+(Math.random()*25-12));
+                nineEleven.createBubbles(t.body.x+20+i*25,t.body.y+15+(Math.random()*25-12));
                 i++;
             }
 
             fx_cleaning.play();
 
             // Shrink the piece of trash
-            this.add.tween(t.scale).to({ x: 0, y: 0}, CLEAN_TIME, "Sine.easeInOut", true, duration);
+            nineEleven.add.tween(t.scale).to({ x: 0, y: 0}, CLEAN_TIME, "Sine.easeInOut", true, duration);
         }
     },
 
@@ -166,8 +166,8 @@ var nineEleven = {
             backgrounds.create(1334*seamless_total,0,'9_11_background');
             tables.create(1334*seamless_total,0,'9_11_table');
             foregrounds.create(1334*seamless_total,0,'9_11_foreground');
-            this.world.setBounds(0, 0, 1334*(seamless_total+1), 750);
-            this.generateTrash();
+            nineEleven.world.setBounds(0, 0, 1334*(seamless_total+1), 750);
+            nineEleven.generateTrash();
 
             allGroup.add(backgrounds);
             allGroup.add(tables);
@@ -179,15 +179,15 @@ var nineEleven = {
     createBubbles: function(x, y) {
         // Create bubbles particle effect
         var bubbles;
-        this.time.events.add(duration, function() {
+        nineEleven.time.events.add(duration, function() {
                 bubbles = game.add.sprite(x, y,'bubbles');
                 bubbles.animations.add('bubbles', [0,1], 5, true);
                 bubbles.anchor.setTo(0.5, 0.5);
                 // Tween the bubbles scale and alpha
-                this.add.tween(bubbles.scale).to({ x: 1.5, y: 1.5}, CLEAN_TIME, "Sine.easeInOut", true);
-                this.add.tween(bubbles).to({ alpha : 0 }, CLEAN_TIME, "Sine.easeInOut", true);
+                nineEleven.add.tween(bubbles.scale).to({ x: 1.5, y: 1.5}, CLEAN_TIME, "Sine.easeInOut", true);
+                nineEleven.add.tween(bubbles).to({ alpha : 0 }, CLEAN_TIME, "Sine.easeInOut", true);
                 // Set a timer to destroy the bubbles after they dissapear
-                this.time.events.add(duration+CLEAN_TIME, function() {bubbles.kill}, game);
+                nineEleven.time.events.add(duration+CLEAN_TIME, function() {bubbles.kill}, game);
             }, game);
     },
 
@@ -200,28 +200,28 @@ var nineEleven = {
         trash.setAll('inputEnabled', true);
         trash.setAll('input.useHandCursor', true);
         trash.forEach(function(t) {
-                t.events.onInputDown.add(this.tapTrash,this);
+                t.events.onInputDown.add(nineEleven.tapTrash,nineEleven);
                 t.anchor.setTo(0.5, 0.5);
-                t.events.onInputOver.add(function() {clean_click = true;}, this);
-                t.events.onInputOut.add(function() {clean_click = false;}, this);
+                t.events.onInputOver.add(function() {clean_click = true;}, nineEleven);
+                t.events.onInputOut.add(function() {clean_click = false;}, nineEleven);
             });
     },
 
     updateUI: function() {
         // Update the text position as the camera moves
-        timeText.x = this.camera.x+25;
-        timeText.y = this.camera.y+25;
-        scoreText.x = this.camera.x+this.camera.width-470;
-        scoreText.y = this.camera.y+25;
+        timeText.x = nineEleven.camera.x + 25;
+        timeText.y = nineEleven.camera.y + 25;
+        scoreText.x = nineEleven.camera.x + nineEleven.camera.width-470;
+        scoreText.y = nineEleven.camera.y + 25;
     },
 
     secondTick: function() {
         time_left -= 1;
         timeText.text = 'Time Left Until Exposure: ' + time_left;
         if (time_left == 0) {
-            this.GameOver();
+            nineEleven.GameOver();
         } else {
-            this.time.events.add(Phaser.Timer.SECOND, this.secondTick, this);
+            nineEleven.time.events.add(Phaser.Timer.SECOND, nineEleven.secondTick, nineEleven);
         }
     },
 
@@ -232,43 +232,43 @@ var nineEleven = {
             t.kill();
         });
 
-        remote = this.add.sprite(player.body.x+300, 500,'trash',0);
+        remote = nineEleven.add.sprite(player.body.x+300, 500,'trash',0);
 
         remote.inputEnabled = true;
         remote.input.useHandCursor = true;
         remote.anchor.setTo(0.5, 0.5);
         remote.events.onInputDown.add(function() {
-                this.playTv();
-                this.time.events.add(duration, function() {
+                nineEleven.playTv();
+                nineEleven.time.events.add(duration, function() {
                     remote.kill();
-                }, this);
-            },this);
-        remote.events.onInputOver.add(function() {clean_click = true;}, this);
-        remote.events.onInputOut.add(function() {clean_click = false;}, this);
+                }, nineEleven);
+            },nineEleven);
+        remote.events.onInputOver.add(function() {clean_click = true;}, nineEleven);
+        remote.events.onInputOut.add(function() {clean_click = false;}, nineEleven);
     },
 
     playTv: function() {
         fx_tv_click.play();
-        tv.x = this.camera.x+430;
+        tv.x = nineEleven.camera.x+430;
         allGroup.add(tv);
-        this.add.tween(tv).to({ y: 50}, 3000, "Linear", true);
-        this.time.events.add(3000, function() {
+        nineEleven.add.tween(tv).to({ y: 50}, 3000, "Linear", true);
+        nineEleven.time.events.add(3000, function() {
             tv.animations.play('video');
             createReturn();
-        }, this);
+        }, nineEleven);
     },
 
     resetLevel: function() {
-        this.fade();
+        nineEleven.fade();
         fading = true;
     },
 
     fade: function() {
-        this.camera.fade(0x000000, 1000);
+        nineEleven.camera.fade(0x000000, 1000);
     },
 
     resetFade: function() {
-        this.camera.resetFX();
+        nineEleven.camera.resetFX();
         player.body.x = PLAYER_START_X - 83.5;
         player.body.y = PLAYER_START_Y - 57;
         fading = false;
@@ -279,4 +279,4 @@ var nineEleven = {
         var boundsB = spriteB.getBounds();
         return Phaser.Rectangle.intersects(boundsA, boundsB);
     }
-}
+};

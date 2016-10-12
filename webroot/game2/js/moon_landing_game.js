@@ -9,20 +9,21 @@ var moonLanding = {
     potCups: 5,
 
     preload: function() {
-        this.load.image('moon_set', 'assets/images/moon_landing_set.png');
-        this.load.spritesheet('player_walk', 'assets/images/mcwalkcycle.png', 118,
+        moonLanding.load.image('moon_set', 'assets/images/moon_landing_set.png');
+        moonLanding.load.image('return_button', 'assets/images/button_return_notebook.png');
+        moonLanding.load.spritesheet('player_walk', 'assets/images/mcwalkcycle.png', 118,
             211, 8);
-        this.load.spritesheet('coffeeMug', 'assets/images/coffee_pot_sprite_sheet.png', 36,
+        moonLanding.load.spritesheet('coffeeMug', 'assets/images/coffee_pot_sprite_sheet.png', 36,
             31, 6, 0, 8);
-        this.load.spritesheet('cameraMan', 'assets/images/cameraman_walk_cycle.png', 129,
+        moonLanding.load.spritesheet('cameraMan', 'assets/images/cameraman_walk_cycle.png', 129,
             208, 4 , 0 , 231);
-        this.load.spritesheet('director', 'assets/images/director_walk_cycle.png', 128,
+        moonLanding.load.spritesheet('director', 'assets/images/director_walk_cycle.png', 128,
             226, 4, 0, 242);
-        this.load.spritesheet('janitor', 'assets/images/janitor_walk_cycle.png', 159,
+        moonLanding.load.spritesheet('janitor', 'assets/images/janitor_walk_cycle.png', 159,
             204, 4, 0, 206);
-        this.load.image('cup_refill', 'assets/images/coffee_speech_bubble.png');
-        this.load.image('happy', 'assets/images/smiley_face_speech_bubble.png');
-        this.load.image('sad', 'assets/images/sad_face_speech_bubble.png');
+        moonLanding.load.image('cup_refill', 'assets/images/coffee_speech_bubble.png');
+        moonLanding.load.image('happy', 'assets/images/smiley_face_speech_bubble.png');
+        moonLanding.load.image('sad', 'assets/images/sad_face_speech_bubble.png');
     },
 
     create: function() {
@@ -32,12 +33,11 @@ var moonLanding = {
         PLAYER_START_Y = 320;
         score = 0;
         interacting = false;
-        time_left = 90;
+        time_left = 30;
 
         moonLanding.world.setBounds(0, 0, 1334, 750);
         // Add the group of moon_set to the game
-        moon_set = moonLanding.add.group();
-        moon_set.create(0,0,'moon_set');
+        backgrounds = moonLanding.add.sprite(0,0,'moon_set');
 
         // Set up player sprite and animation
         player = moonLanding.add.sprite (PLAYER_START_X, PLAYER_START_Y, 'player_walk');
@@ -78,7 +78,7 @@ var moonLanding = {
         // Set up game physics, keyboard input, camera fade listener
         game.physics.arcade.enable(player);
         game.physics.arcade.enable(customerGroup);
-        cursors = moonLanding.input.pointer1;
+        //cursors = moonLanding.input.pointer1;
         moonLanding.camera.onFadeComplete.add(moonLanding.resetFade, moonLanding);
 
         // Start the timer for the level
@@ -259,4 +259,4 @@ var moonLanding = {
         var boundsB = spriteB.getBounds();
         return Phaser.Rectangle.intersects(boundsA, boundsB);
     }
-}
+};
