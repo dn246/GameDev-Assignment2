@@ -49,7 +49,7 @@ var cleaning = false;
 var clean_click = false;
 
 // RAIN DANCE GAME VARIABLES
-var MOVE_DURATION = 1500;
+var MOVE_DURATION = 1000;
 var LEFT_ANIM = 0;
 var DOWN_ANIM = 1;
 var RIGHT_ANIM = 2;
@@ -60,17 +60,17 @@ var can_swipe = true;
 var level = -1;
 var curr_i = 0;
 var player_turn = false;
-var dance_moves = [[0],[0,1],[0,1,2],[0,1,2,3]];
+var dance_moves = [[0],[1,2],[3,2,1],[0,1,2,3]];
 var your_moves = [];
 var game_over = false;
 /*
  dance_moves = ...
- index = 0    index = 1    index = 2
- +--------------------------------------+
- level = 0 |danceMove(n)|            |            |
- level = 1 |danceMove(n)|danceMove(n)|            |
- level = 2 |danceMove(n)|danceMove(n)|danceMove(n)|
- +--------------------------------------+
+              index = 0    index = 1    index = 2
+ +-------------------------------------------------+
+ |level = 0 |danceMove(n)|            |            |
+ |level = 1 |danceMove(n)|danceMove(n)|            |
+ |level = 2 |danceMove(n)|danceMove(n)|danceMove(n)|
+ +-------------------------------------------------+
  */
 
 // Sound declarations
