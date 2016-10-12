@@ -2,10 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="26b0ed8b-d63e-48a8-a681-5a10d96f0177" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/webroot/game2/assets/images/9_11_menu_screen.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/webroot/game2/assets/images/right_coffee_speech_bubble.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/webroot/game2/assets/images/weather_machine_menu_select.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/webroot/game2/assets/images/notebook_pages.png" afterPath="$PROJECT_DIR$/webroot/game2/assets/images/notebook_pages.png" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/webroot/game2/js/9_11_game.js" afterPath="$PROJECT_DIR$/webroot/game2/js/9_11_game.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/webroot/game2/js/moon_landing_game.js" afterPath="$PROJECT_DIR$/webroot/game2/js/moon_landing_game.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/webroot/game2/js/setup.js" afterPath="$PROJECT_DIR$/webroot/game2/js/setup.js" />
     </list>
     <ignored path="game2.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -395,12 +396,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1475511627393</updated>
-      <workItem from="1475511634204" duration="145748000" />
+      <workItem from="1475511634204" duration="146425000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="145748000" />
+    <option name="totallyTimeSpent" value="146425000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
