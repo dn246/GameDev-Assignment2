@@ -36,7 +36,9 @@ var moonLanding = {
         //AUDIO
         moonLanding.load.audio('pour','assets/sounds/coffee_pour.wav');
         moonLanding.load.audio('quote','assets/sounds/moon_quote.wav');
+        moonLanding.load.audio('buzzer','assets/sounds/clock_buzzer.wav');
         moonLanding.load.audio('ding','assets/sounds/ding.wav');
+        moonLanding.load.audio('shortPour','assets/sounds/Coffee_Pour_short.wav')
     },
 
     init: function () {
@@ -52,7 +54,9 @@ var moonLanding = {
         // Set up all the game sounds
         fx_cofee_pour = moonLanding.add.audio('pour');
         fx_moon_guote = moonLanding.add.audio('quote');
-        fx_ding = moonLanding.add.audio('ding');
+        fx_clock_buzzer = moonLanding.add.audio('buzzer');
+        fx_ding = moonLanding.add.audio('buzzer');
+        fx_short_pour = moonLanding.add.audio('shortPour');
 
         cursors = moonLanding.input.pointer1;
 
@@ -113,6 +117,9 @@ var moonLanding = {
 
     update: function() {
         if (!game_over) {
+            if (time_left === 2){
+                fx_clock_buzzer.play();
+            }
             moonLanding.cameraTimer--;
             moonLanding.janitorTimer--;
             moonLanding.directorTimer--;
@@ -225,7 +232,7 @@ var moonLanding = {
             interacting = true;
             if (moonLanding.potCups > 0) {
                 moonLanding.potCups -= 1;
-                fx_cofee_pour.play();
+                fx_short_pour.play();
                 coffeePot.animations.play(moonLanding.potCups.toString());
                 score += 10;
                 scoreText.text = 'Score: ' + score;
@@ -233,6 +240,7 @@ var moonLanding = {
 
             } else {
                 console.log("you have no coffee! GO GET SOME!!!");
+                fx_ding.play();
             }
             interacting = false;
         }

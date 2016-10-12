@@ -88,8 +88,10 @@ var fx_clock_buzzer;
 var fx_cofee_pour;
 var fx_ding;
 var fx_incorrect;
+var fx_main_music;
 var fx_moon_guote;
 var fx_page_turn;
+var fx_short_pour;
 var fx_thunder_storm;
 var fx_tv_click;
 

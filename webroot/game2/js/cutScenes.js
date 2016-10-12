@@ -61,11 +61,14 @@ var cutScenes = {
         cutScenes.load.spritesheet('background','assets/images/intro_background.png',1334,750);
         //AUDIO
         cutScenes.load.audio('pageTurn','assets/sounds/page_turn.wav');
+        cutScenes.load.audio('music','assets/sounds/main_music.wav')
     },
 
     create: function () {
         backgrounds = cutScenes.add.sprite(0, 0, 'background');
         fx_page_turn = cutScenes.add.audio('pageTurn');
+        fx_main_music = cutScenes.add.audio('music',.5,true);
+        fx_main_music.play();
         cutScenes.introSlides[cutScenes.currentFrame]();
 
 

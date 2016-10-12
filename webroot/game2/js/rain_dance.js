@@ -79,7 +79,7 @@ var rain_dance = {
 
         emitter.start(false, 1600, 5, 0);
         emitter.frequency = 500;
-        
+
 
         // Start Shirley's first turn
         rain_dance.shirleysTurn();

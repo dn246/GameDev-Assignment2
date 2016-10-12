@@ -26,7 +26,7 @@ var nineEleven = {
         PLAYER_START_Y = 410;
         score = 0;
         interacting = false;
-        time_left = 10;
+        time_left = 30;
 
         // Set up all the game sounds
         fx_cleaning = nineEleven.add.audio('cleaning');
