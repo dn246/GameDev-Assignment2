@@ -79,7 +79,6 @@ var cutScenes = {
 
     nextScreen: function () {
         if (cutScenes.currentFrame<5){
-            console.log(cutScenes.currentFrame)
             cutScenes.currentFrame++;
             cutScenes.clearSlide();
             cutScenes.introSlides[cutScenes.currentFrame]();

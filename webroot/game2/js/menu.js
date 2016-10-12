@@ -107,7 +107,11 @@ var mainMenu = {
             currentPage++;
             mainMenu.clearPage();
             mainMenu.notebook.animations.play('right_turn');
-            mainMenu.pages[currentPage]();
+
+            mainMenu.notebook.animations.currentAnim.onComplete.add(function () {
+                mainMenu.clearPage();
+                mainMenu.pages[currentPage]();
+            }, mainMenu);
         }
 
     },
@@ -117,7 +121,11 @@ var mainMenu = {
             currentPage--;
             mainMenu.clearPage();
             mainMenu.notebook.animations.play('left_turn');
-            mainMenu.pages[currentPage]();
+
+            mainMenu.notebook.animations.currentAnim.onComplete.add(function () {
+                mainMenu.clearPage();
+                mainMenu.pages[currentPage]();
+            }, mainMenu);
         }
     },
 
