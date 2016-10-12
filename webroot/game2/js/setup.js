@@ -10,6 +10,10 @@ var bookTextStyle = { font: "20px Bradley Hand ITC", fill: "#000000", align: "le
     wordWrap: true, wordWrapWidth: 475};
 var currentPage = 0;
 
+//CUTSCENE VARIABLES
+var cutSceneStyle = { font: "20px Arial", fill: "#000000", align: "left",
+    wordWrap: true, wordWrapWidth: 400};
+
 //ALL GAME VARIABLES
 var player;
 var interacting = false;
@@ -85,11 +89,12 @@ var fx_tv_click;
 
 
 game.state.add('menu',mainMenu);
-game.state.add('moon',moonLanding);
+game.state.add('intro',cutScenes);
 game.state.add('9/11',nineEleven);
+game.state.add('moon',moonLanding);
 game.state.add('rain',rain_dance);
 
-game.state.start('menu');
+game.state.start('intro');
 
 //blank statements for use by other files
 function preload() {
