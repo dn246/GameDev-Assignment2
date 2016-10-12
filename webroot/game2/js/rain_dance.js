@@ -21,6 +21,31 @@ var rain_dance = {
         rain_dance.load.audio('click', 'assets/sounds/click.wav');
     },
 
+    init: function () {
+        score = 0;
+        interacting = false;
+        time_left = 30;
+        game_over = false;
+
+        cursors = rain_dance.input.pointer1;
+
+        // Set up text box for the score variable in UI
+        var scoreStyle = { font: "24px Arial", fill: "#ffffff", align: "left"};
+        scoreText = rain_dance.add.text(25, 25, 'Precipitation: 50%', scoreStyle);
+        var timeStyle = { font: "24px Arial", fill: "#ffffff", align: "left"};
+        timeText = rain_dance.add.text(1170, 25, 'Time Left: 10', timeStyle);
+        timeText.visible = false;
+        
+        // Load sounds
+        fx_boo = rain_dance.add.audio('boo');
+        fx_cheer = rain_dance.add.audio('cheer');
+        fx_clock_buzzer = rain_dance.add.audio('clock_buzzer');
+        fx_incorrect = rain_dance.add.audio('incorrect');
+        fx_thunder_storm = rain_dance.add.audio('thunder_storm');
+        fx_click = rain_dance.add.audio('click');
+
+    },
+
     create: function() {
         // Add the group of backgrounds to the game
         backgrounds = rain_dance.add.sprite(0,0,'rpi_background');
@@ -56,23 +81,7 @@ var rain_dance = {
         emitter.start(false, 1600, 5, 0);
         emitter.frequency = 500;
 
-        // Set up text box for the score variable in UI
-        var scoreStyle = { font: "24px Arial", fill: "#ffffff", align: "left"};
-        scoreText = rain_dance.add.text(25, 25, 'Precipitation: 50%', scoreStyle);
-        var timeStyle = { font: "24px Arial", fill: "#ffffff", align: "left"};
-        timeText = rain_dance.add.text(1170, 25, 'Time Left: 10', timeStyle);
-        timeText.visible = false;
 
-        // Set up touch input
-        cursors = rain_dance.input.pointer1;
-
-        // Load sounds
-        fx_boo = rain_dance.add.audio('boo');
-        fx_cheer = rain_dance.add.audio('cheer');
-        fx_clock_buzzer = rain_dance.add.audio('clock_buzzer');
-        fx_incorrect = rain_dance.add.audio('incorrect');
-        fx_thunder_storm = rain_dance.add.audio('thunder_storm');
-        fx_click = rain_dance.add.audio('click');
 
         // Start Shirley's first turn
         rain_dance.shirleysTurn();
