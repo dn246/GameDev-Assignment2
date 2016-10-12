@@ -11,7 +11,7 @@ var nineEleven = {
         nineEleven.load.spritesheet('player_crawling', 'assets/images/9_11_player_sprite_2.png', 147, 120);
         nineEleven.load.spritesheet('trash', 'assets/images/9_11_trash_sprites.png', 92, 60);
         nineEleven.load.spritesheet('bubbles', 'assets/images/9_11_bubbles_small.png', 43, 30);
-        nineEleven.load.spritesheet('tv', 'assets/images/9_11_tv.png', 508, 276);
+        nineEleven.load.spritesheet('tv', 'assets/images/9_11_tv_screens.png', 508, 276);
 
         nineEleven.load.audio('cleaning', 'assets/sounds/cleaning.wav');
         nineEleven.load.audio('clock_buzzer', 'assets/sounds/clock_buzzer.wav');
@@ -19,6 +19,12 @@ var nineEleven = {
     },
 
     create: function() {
+        PLAYER_START_X = 100;
+        PLAYER_START_Y = 410;
+        score = 0;
+        interacting = false;
+        time_left = 30;
+
         nineEleven.world.setBounds(0, 0, 1334*(seamless_total+1), 750);
 
         // Add the group of backgrounds to the game
@@ -48,11 +54,12 @@ var nineEleven = {
         foregrounds.create(1334,0,'9_11_foreground');
 
         tv = nineEleven.add.sprite(430,-273,'tv');
-        tv.animations.add('video', [0,1,2,3,4,5,6,7,8], 5, true);
+        tv.animations.add('video', [0,1,2,3,4,5,6,7,8], 1, true);
 
         // Set up text box for timer and score variable in UI
         var timeStyle = { font: "24px Lucida Console", fill: "#ffffff", align: "left"};
-        timeText = nineEleven.add.text(nineEleven.camera.x+25, nineEleven.camera.y+25, 'Time Left Until Exposure: 30', timeStyle);
+        timeText = nineEleven.add.text(nineEleven.camera.x+25, nineEleven.camera.y+25,
+            'Time Left Until Exposure: ' + time_left.toString(), timeStyle);
         var scoreStyle = { font: "24px Lucida Console", fill: "#ffffff", align: "right"};
         scoreText = nineEleven.add.text(nineEleven.camera.x+nineEleven.camera.width-400, nineEleven.camera.y+25, 'Government filth cleaned up: 0', scoreStyle);
 
@@ -254,7 +261,7 @@ var nineEleven = {
         nineEleven.add.tween(tv).to({ y: 50}, 3000, "Linear", true);
         nineEleven.time.events.add(3000, function() {
             tv.animations.play('video');
-            createReturn();
+            nineEleven.createReturn();
         }, nineEleven);
     },
 
@@ -272,6 +279,15 @@ var nineEleven = {
         player.body.x = PLAYER_START_X - 83.5;
         player.body.y = PLAYER_START_Y - 57;
         fading = false;
+    },
+
+    createReturn: function() {
+        var return_button = nineEleven.add.sprite(nineEleven.camera.x + 1150,600,'return_button');
+        return_button.inputEnabled = true;
+        return_button.events.onInputDown.add(function() {
+            game.state.start('menu');
+        });
+        return_button.anchor.setTo(0.5, 0.5);
     },
 
     checkOverlap: function(spriteA, spriteB) {

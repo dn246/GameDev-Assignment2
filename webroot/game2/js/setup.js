@@ -94,7 +94,7 @@ game.state.add('9/11',nineEleven);
 game.state.add('moon',moonLanding);
 game.state.add('rain',rain_dance);
 
-game.state.start('intro');
+game.state.start('moon');
 
 //blank statements for use by other files
 function preload() {
