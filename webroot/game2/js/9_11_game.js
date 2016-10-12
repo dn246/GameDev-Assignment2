@@ -4,26 +4,48 @@
 var nineEleven = {
 
     preload: function() {
+        //IMAGES
         nineEleven.load.image('9_11_background', 'assets/images/9_11_background_dark.png');
         nineEleven.load.image('9_11_table', 'assets/images/9_11_seamless_table.png');
         nineEleven.load.image('9_11_foreground', 'assets/images/9_11_seamless_foreground.png');
         nineEleven.load.image('return_button', 'assets/images/button_return_notebook.png');
+        //SPRITES
         nineEleven.load.spritesheet('player_crawling', 'assets/images/9_11_player_sprite_2.png', 147, 120);
         nineEleven.load.spritesheet('trash', 'assets/images/9_11_trash_sprites.png', 92, 60);
         nineEleven.load.spritesheet('bubbles', 'assets/images/9_11_bubbles_small.png', 43, 30);
         nineEleven.load.spritesheet('tv', 'assets/images/9_11_tv_screens.png', 508, 276);
-
+        //AUDIO
         nineEleven.load.audio('cleaning', 'assets/sounds/cleaning.wav');
         nineEleven.load.audio('clock_buzzer', 'assets/sounds/clock_buzzer.wav');
         nineEleven.load.audio('tv_click', 'assets/sounds/tv_click.wav');
     },
 
-    create: function() {
+    init: function () {
+        // Global variable redefinition
         PLAYER_START_X = 100;
         PLAYER_START_Y = 410;
         score = 0;
         interacting = false;
         time_left = 30;
+
+        // Set up all the game sounds
+        fx_cleaning = nineEleven.add.audio('cleaning');
+        fx_clock_buzzer = nineEleven.add.audio('clock_buzzer');
+        fx_tv_click = nineEleven.add.audio('tv_click');
+
+        cursors = game.input.pointer1;
+
+        // Set up text box for timer and score variable in UI
+        var timeStyle = { font: "24px Lucida Console", fill: "#ffffff", align: "left"};
+        timeText = nineEleven.add.text(nineEleven.camera.x+25, nineEleven.camera.y+25,
+            'Time Left Until Exposure: ' + time_left.toString(), timeStyle);
+        var scoreStyle = { font: "24px Lucida Console", fill: "#ffffff", align: "right"};
+        scoreText = nineEleven.add.text(nineEleven.camera.x+nineEleven.camera.width-400,
+            nineEleven.camera.y+25, 'Government filth cleaned up: 0', scoreStyle);
+    },
+
+    create: function() {
+        nineEleven.init();
 
         nineEleven.world.setBounds(0, 0, 1334*(seamless_total+1), 750);
 
@@ -54,27 +76,15 @@ var nineEleven = {
         foregrounds.create(1334,0,'9_11_foreground');
 
         tv = nineEleven.add.sprite(430,-273,'tv');
-        tv.animations.add('video', [0,1,2,3,4,5,6,7,8], 1, true);
+        tv.animations.add('video', [0,1,2,3,4,5,6,7,8], 5, true);
 
-        // Set up text box for timer and score variable in UI
-        var timeStyle = { font: "24px Lucida Console", fill: "#ffffff", align: "left"};
-        timeText = nineEleven.add.text(nineEleven.camera.x+25, nineEleven.camera.y+25,
-            'Time Left Until Exposure: ' + time_left.toString(), timeStyle);
-        var scoreStyle = { font: "24px Lucida Console", fill: "#ffffff", align: "right"};
-        scoreText = nineEleven.add.text(nineEleven.camera.x+nineEleven.camera.width-400, nineEleven.camera.y+25, 'Government filth cleaned up: 0', scoreStyle);
 
         // Set up game physics, keyboard input, camera fade listener
         game.physics.arcade.enable(player);
-        cursors = game.input.pointer1;
         nineEleven.camera.onFadeComplete.add(nineEleven.resetFade, nineEleven);
 
         // Start the timer for the level
         nineEleven.time.events.add(Phaser.Timer.SECOND, nineEleven.secondTick, nineEleven);
-
-        // Set up all the game sounds
-        fx_cleaning = nineEleven.add.audio('cleaning');
-        fx_clock_buzzer = nineEleven.add.audio('clock_buzzer');
-        fx_tv_click = nineEleven.add.audio('tv_click');
 
         // Add all objects to the m_allGroup
         allGroup = nineEleven.add.group();
