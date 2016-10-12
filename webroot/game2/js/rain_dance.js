@@ -18,23 +18,16 @@ var rain_dance = {
         rain_dance.load.audio('incorrect', 'assets/sounds/incorrect.wav');
         rain_dance.load.audio('thunder_storm', 'assets/sounds/thunder_storm.wav');
         rain_dance.load.audio('click', 'assets/sounds/click.wav');
+        rain_dance.load.audio('hipHop', 'assets/music/hip_hop_loop.wav');
     },
 
     init: function () {
-        score = 0;
+        score = 50;
         interacting = false;
-        time_left = 30;
         game_over = false;
 
         cursors = rain_dance.input.pointer1;
 
-        // Set up text box for the score variable in UI
-        var scoreStyle = { font: "24px Arial", fill: "#ffffff", align: "left"};
-        scoreText = rain_dance.add.text(25, 25, 'Precipitation: 50%', scoreStyle);
-        var timeStyle = { font: "24px Arial", fill: "#ffffff", align: "left"};
-        timeText = rain_dance.add.text(1170, 25, 'Time Left: 10', timeStyle);
-        timeText.visible = false;
-        
         // Load sounds
         fx_boo = rain_dance.add.audio('boo');
         fx_cheer = rain_dance.add.audio('cheer');
@@ -43,9 +36,15 @@ var rain_dance = {
         fx_thunder_storm = rain_dance.add.audio('thunder_storm');
         fx_click = rain_dance.add.audio('click');
         fx_ding = rain_dance.add.audio('ding');
+        fx_hipHop = rain_dance.add.audio('hipHop', true);
     },
 
     create: function() {
+        rain_dance.init();
+
+        // loop the music
+        fx_hipHop.play();
+
         // Add the group of backgrounds to the game
         backgrounds = rain_dance.add.sprite(0,0,'rpi_background');
 
@@ -78,8 +77,11 @@ var rain_dance = {
         emitter.setXSpeed(-5, 5);
 
         emitter.start(false, 1600, 5, 0);
-        emitter.frequency = 500;
+        emitter.frequency = 50;
 
+        // Set up text box for the score variable in UI
+        var scoreStyle = { font: "24px Arial", fill: "#ffffff", align: "left"};
+        scoreText = rain_dance.add.text(25, 25, 'Precipitation: 50%', scoreStyle);
 
         // Start Shirley's first turn
         rain_dance.shirleysTurn();
@@ -91,7 +93,7 @@ var rain_dance = {
 
     flashText: function(c) {
         var switch_turnsStyle = { font: "40px Arial", fill: "#ffffff", align: "center"};
-        switch_turns = rain_dance.add.text(667, 375, c+'\'s Turn', switch_turnsStyle);
+        switch_turns = rain_dance.add.text(667, 375, c, switch_turnsStyle);
         switch_turns.anchor.setTo(0.5,0.5);
         rain_dance.add.tween(switch_turns.scale).to({ x: 2, y: 2 }, 1000, Phaser.Easing.Linear.None, true);
         rain_dance.add.tween(switch_turns).to({ alpha: 0 }, 1000, Phaser.Easing.Linear.None, true);
@@ -103,34 +105,10 @@ var rain_dance = {
     playersTurn: function() {
         console.log("PLAYERS TURN");
         player_turn = true;
-        timeText.visible = true;
         curr_i = 0;
         time_left = 10;
 
-        rain_dance.flashText('Player');
-
-        // Start the timer for the m_player
-        rain_dance.time.events.add(1000, rain_dance.secondTick, game);
-    },
-
-    secondTick: function() {
-        /*
-        time_left -= 1;
-        fx_click.play();
-        if (time_left < 0) {
-            time_left = 0;
-            fx_clock_buzzer.play();
-        }
-        timeText.text = 'Time Left: ' + time_left;
-        if (time_left == 0) {
-            rain_dance.updateScore(10);
-            console.log("PLAYER FAIL");
-            fx_incorrect.play();
-            rain_dance.shirleysTurn();
-        } else {
-            rain_dance.time.events.add(1000, rain_dance.secondTick, game);
-        }
-        */
+        rain_dance.flashText('Player\'s Turn');
     },
 
     shirleysTurn: function() {
@@ -141,7 +119,6 @@ var rain_dance = {
             }
 
             player_turn = false;
-            timeText.visible = false;
             curr_i = 0;
             your_moves = [];
             level++;
@@ -171,15 +148,10 @@ var rain_dance = {
                 return element === dance_moves[level][index];
             });
 
-            if (your_moves[your_moves.length-1] == dance_moves[your_moves.length-1]) {
-                fx_ding.play();
-            }
-
             if (your_moves.length > dance_moves[level].length) {
-                rain_dance.updateScore(10);
-                fx_incorrect.play();
+                rain_dance.updateScore(15);
                 console.log("PLAYER FAIL");
-                rain_dance.flashText('You Failed! Shirley');
+                rain_dance.flashText('You Failed! Shirley\'s Turn');
                 rain_dance.time.events.add(1000, function() {
                     rain_dance.shirleysTurn();
                 }, game);
@@ -189,9 +161,11 @@ var rain_dance = {
             if (same_elements) {
                 if (your_moves.length > 0 && your_moves.length == dance_moves[level].length) {
                     rain_dance.time.events.add(MOVE_DURATION, function() {
-                        rain_dance.updateScore(-10);
+                        rain_dance.updateScore(-15);
                         console.log("PLAYER SUCCESS [" + your_moves + "] == [" + dance_moves[level] + "]");
-                        rain_dance.flashText('Good Job! Shirley');
+                        if (score > 0) {
+                            rain_dance.flashText('Good Job! Shirley\'s Turn');
+                        }
                         rain_dance.time.events.add(1000, function() {
                             rain_dance.shirleysTurn();
                         }, game);
@@ -199,10 +173,9 @@ var rain_dance = {
                     return;
                 }
             } else {
-                rain_dance.updateScore(10);
-                fx_incorrect.play();
+                rain_dance.updateScore(15);
                 console.log("PLAYER FAIL");
-                rain_dance.flashText('You Failed! Shirley');
+                rain_dance.flashText('You Failed! Shirley\'s Turn');
                 rain_dance.time.events.add(1000, function() {
                     rain_dance.shirleysTurn();
                 }, game);
@@ -222,7 +195,7 @@ var rain_dance = {
                 rain_dance.input.onDown.add(function(pointer) {
                     swipedX = pointer.clientX;
                     swipedY = pointer.clientY;
-                    }, rain_dance);
+                }, rain_dance);
                 rain_dance.input.onUp.add(function(pointer) {
                     if (can_swipe) {
                         swipedX2 = pointer.clientX;
@@ -262,6 +235,11 @@ var rain_dance = {
     danceMove: function(character, i) {
         if (character == player) {
             rain_dance.time.events.add(MOVE_DURATION, rain_dance.checkMoves, game);
+            if (your_moves[your_moves.length-1] == dance_moves[level][your_moves.length-1]) {
+                fx_ding.play();
+            } else {
+                fx_incorrect.play();
+            }
         } else {
             rain_dance.swipeArrow(i);
         }
@@ -312,16 +290,19 @@ var rain_dance = {
         player_turn = false;
         if (score <= 0) {
             fx_cheer.play();
+            rain_dance.flashText('Congratulations! You thwarted Shirley!');
             backgrounds = rain_dance.add.sprite(0,0,'rpi_background_light');
         } else {
+            rain_dance.flashText('Shirley Prevailed! You Lose!');
             fx_boo.play();
         }
+        //fx_hipHop.stop();
         createReturn();
     },
 
     updateScore: function(s) {
         score += s;
-        emitter.frequency = (101 - score) * 10;
+        emitter.frequency = score + 1;
         scoreText.text = 'Precipitation: ' + score + '%';
 
         if (score <= 0) {

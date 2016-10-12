@@ -90,6 +90,7 @@ var fx_ding;
 var fx_incorrect;
 var fx_main_music;
 var fx_moon_guote;
+var fx_hipHop;
 var fx_page_turn;
 var fx_short_pour;
 var fx_thunder_storm;
@@ -124,6 +125,7 @@ function createReturn() {
 	var return_button = game.add.sprite(1150,600,'return_button');
     return_button.inputEnabled = true;
 	return_button.events.onInputDown.add(function() {
+	    fx_main_music.stop();
 		game.state.start('menu');
 	});
 	return_button.anchor.setTo(0.5, 0.5);
